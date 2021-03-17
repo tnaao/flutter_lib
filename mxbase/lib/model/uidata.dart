@@ -2,7 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'user_info.dart';
+import 'package:mxbase/model/user_info.dart';
 
 class UIData {
   //routes

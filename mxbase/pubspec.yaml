@@ -13,6 +13,8 @@ dependencies:
     sdk: flutter
   flutter_easyrefresh: ^2.1.8
   event_bus: ^2.0.0
+  cached_network_image: ^2.5.1
+
 
 dev_dependencies:
   flutter_test:

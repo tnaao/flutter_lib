@@ -14,4 +14,6 @@ class AppHolder {
   static EventBus get eventBus {
     return _bus;
   }
+
+  String HOST = "";
 }
