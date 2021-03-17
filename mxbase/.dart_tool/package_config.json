@@ -38,6 +38,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "event_bus",
+      "rootUri": "file:///Users/leaf/development/flutter/.pub-cache/hosted/pub.dartlang.org/event_bus-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "fake_async",
       "rootUri": "file:///Users/leaf/development/flutter/.pub-cache/hosted/pub.dartlang.org/fake_async-1.2.0",
       "packageUri": "lib/",
@@ -48,6 +54,12 @@
       "rootUri": "file:///Users/leaf/development/flutter/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_easyrefresh",
+      "rootUri": "file:///Users/leaf/development/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_easyrefresh-2.1.8",
+      "packageUri": "lib/",
+      "languageVersion": "2.3"
     },
     {
       "name": "flutter_test",
@@ -134,7 +146,7 @@
       "languageVersion": "2.7"
     }
   ],
-  "generated": "2021-03-17T05:42:31.701475Z",
+  "generated": "2021-03-17T07:06:05.624212Z",
   "generator": "pub",
   "generatorVersion": "2.12.1"
 }
