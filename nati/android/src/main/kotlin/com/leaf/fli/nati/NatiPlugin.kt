@@ -1,36 +1,62 @@
 package com.leaf.fli.nati
 
 import androidx.annotation.NonNull
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.PluginRegistry.Registrar
 
 /** NatiPlugin */
-class NatiPlugin: FlutterPlugin, MethodCallHandler {
-  /// The MethodChannel that will the communication between Flutter and native Android
-  ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-  /// when the Flutter Engine is detached from the Activity
-  private lateinit var channel : MethodChannel
+class NatiPlugin : FlutterPlugin, ActivityAware {
 
-  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "nati")
-    channel.setMethodCallHandler(this)
-  }
-
-  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else {
-      result.notImplemented()
+    companion object {
+        @JvmField
+        val CHANNEL_NAME = "com.leaf.fli/nati"
     }
-  }
 
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
-  }
+    private var sender: IntentSender? = null
+    private var impl: MethodCallHandlerImpl? = null
+
+    /// The MethodChannel that will the communication between Flutter and native Android
+    ///
+    /// This local reference serves to register the plugin with the Flutter Engine and unregister it
+    /// when the Flutter Engine is detached from the Activity
+    private lateinit var channel: MethodChannel
+
+    init {
+        sender = IntentSender( /*activity=*/null,  /*applicationContext=*/null)
+        impl = MethodCallHandlerImpl(sender)
+    }
+
+
+    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        sender?.setApplicationContext(flutterPluginBinding.applicationContext)
+        sender?.setActivity(null)
+        impl?.startListening(flutterPluginBinding.binaryMessenger)
+    }
+
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        channel.setMethodCallHandler(null)
+    }
+
+    override fun onDetachedFromActivity() {
+        sender?.setActivity(null)
+    }
+
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        onAttachedToActivity(binding)
+    }
+
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        sender?.setActivity(binding.activity)
+        impl?.let {
+            binding.addActivityResultListener(it)
+        }
+    }
+
+    override fun onDetachedFromActivityForConfigChanges() {
+        onDetachedFromActivity()
+    }
 }
