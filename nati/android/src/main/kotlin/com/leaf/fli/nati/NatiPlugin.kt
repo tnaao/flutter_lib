@@ -12,6 +12,7 @@ import io.flutter.plugin.common.MethodChannel.Result
 enum class NatiMethodEn(val method: String) {
     hideKeyboard("HideKeyboard"),
     appversion("AppVersion"),
+    share("Share"),
     login("Login");
 }
 

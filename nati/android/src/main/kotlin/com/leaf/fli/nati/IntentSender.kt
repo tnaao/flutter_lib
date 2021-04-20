@@ -14,7 +14,9 @@ import android.text.TextUtils
 import android.util.Log
 import com.leaf.umxlib.UMXLib
 import com.leaf.umxlib.model.UmxLoginResultEvent
+import com.leaf.umxlib.model.UmxShareEvent
 import com.leaf.umxlib.model.UmxSharePlatEn
+import com.leaf.umxlib.model.UmxShareResultEvent
 
 /**
  * Forms and launches intents.
@@ -77,6 +79,23 @@ class IntentSender
         } else {
             UMXLib.login(activity!!, platLocal, onSucceed = onSucceed, onError = onError)
         }
+        return true
+    }
+
+    fun doShare(evt: UmxShareEvent, onSucceed: (UmxShareResultEvent) -> Unit, onError: (UmxShareResultEvent) -> Unit): Boolean {
+        if (activity == null) {
+            return false
+        }
+        UMXLib.share(activity!!, evt, onSucceed = {
+            val evtLocal = UmxShareResultEvent()
+            evtLocal.succeed = true;
+            onSucceed(evtLocal)
+        }, onError = {
+            val evtLocal = UmxShareResultEvent()
+            evtLocal.succeed = false;
+            evtLocal.errorMsg = it
+            onError(evtLocal)
+        })
         return true
     }
 

@@ -19,6 +19,8 @@ import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.leaf.fli.nati.util.CommonUtil;
 import com.leaf.umxlib.model.UmxLoginResultEvent;
+import com.leaf.umxlib.model.UmxShareEvent;
+import com.leaf.umxlib.model.UmxShareResultEvent;
 
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -165,6 +167,23 @@ public final class MethodCallHandlerImpl implements MethodCallHandler, PluginReg
                 });
             }
             return true;
+        }
+
+        if (method.equals(NatiMethodEn.share.getMethod())) {
+            UmxShareEvent args = gson.fromJson(argumentJson, UmxShareEvent.class);
+            sender.doShare(args, new Function1<UmxShareResultEvent, Unit>() {
+                @Override
+                public Unit invoke(UmxShareResultEvent umxShareResultEvent) {
+                    pendingResult.success(gson.toJson(umxShareResultEvent));
+                    return null;
+                }
+            }, new Function1<UmxShareResultEvent, Unit>() {
+                @Override
+                public Unit invoke(UmxShareResultEvent umxShareResultEvent) {
+                    pendingResult.success(gson.toJson(umxShareResultEvent));
+                    return null;
+                }
+            });
         }
 
         if (method.equals(NatiMethodEn.appversion.getMethod())) {
