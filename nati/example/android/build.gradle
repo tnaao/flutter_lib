@@ -15,7 +15,10 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url 'https://dl.bintray.com/umsdk/release'}
+        maven {
+            url 'http://42.192.169.232:8081/repository/host/'
+        }
+        maven { url 'https://dl.bintray.com/umsdk/release' }
     }
 }
 

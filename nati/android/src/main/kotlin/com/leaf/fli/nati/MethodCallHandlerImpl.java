@@ -5,6 +5,7 @@
 package com.leaf.fli.nati;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
+import com.leaf.fli.nati.util.CommonUtil;
+import com.leaf.umxlib.model.UmxLoginResultEvent;
 
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -23,6 +26,8 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +63,7 @@ public final class MethodCallHandlerImpl implements MethodCallHandler, PluginReg
      */
     void startListening(BinaryMessenger messenger) {
         if (methodChannel != null) {
-            Log.wtf(TAG, "Setting a method call handler before the last was disposed.");
+            Log.e(TAG, "Setting a method call handler before the last was disposed.");
             stopListening();
         }
 
@@ -126,6 +131,54 @@ public final class MethodCallHandlerImpl implements MethodCallHandler, PluginReg
     }
 
     private boolean MxHandled(String method, String argumentJson) {
+        if (method.equals(NatiMethodEn.hideKeyboard.getMethod())) {
+            sender.doInvoke(new Function1<Context, Unit>() {
+                @Override
+                public Unit invoke(Context context) {
+                    CommonUtil.INSTANCE.hideInput(context);
+                    return null;
+                }
+            });
+            pendingResult.success("{}");
+            return true;
+        }
+
+        if (method.equals(NatiMethodEn.login.getMethod())) {
+            LoginEvent args = gson.fromJson(argumentJson, LoginEvent.class);
+            if (args.getPlat() != null) {
+                sender.doLogin(args.getPlat(), new Function1<UmxLoginResultEvent, Unit>() {
+                    @Override
+                    public Unit invoke(UmxLoginResultEvent umxLoginResultEvent) {
+                        umxLoginResultEvent.setSucceed(true);
+                        pendingResult.success(gson.toJson(umxLoginResultEvent));
+                        return null;
+                    }
+                }, new Function1<String, Unit>() {
+                    @Override
+                    public Unit invoke(String s) {
+                        UmxLoginResultEvent result = new UmxLoginResultEvent();
+                        result.setErrorMsg(s);
+                        result.setSucceed(false);
+                        pendingResult.success(gson.toJson(result));
+                        return null;
+                    }
+                });
+            }
+            return true;
+        }
+
+        if (method.equals(NatiMethodEn.appversion.getMethod())) {
+            sender.doInvoke(new Function1<Context, Unit>() {
+                @Override
+                public Unit invoke(Context context) {
+                    final String versionName = CommonUtil.INSTANCE.getAppVersionName(context);
+                    pendingResult.success(versionName);
+                    return null;
+                }
+            });
+            return true;
+        }
+
         return false;
     }
 

@@ -8,7 +8,15 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.Result
 
-/** NatiPlugin */
+
+enum class NatiMethodEn(val method: String) {
+    hideKeyboard("HideKeyboard"),
+    appversion("AppVersion"),
+    login("Login");
+}
+
+class LoginEvent(var plat: Int? = 0)
+
 class NatiPlugin : FlutterPlugin, ActivityAware {
 
     companion object {
