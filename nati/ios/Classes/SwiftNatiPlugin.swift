@@ -2,7 +2,7 @@ import Flutter
 import UIKit
 
 public class SwiftNatiPlugin: NSObject, FlutterPlugin {
-    static let CHANNEL_NAME = "com.leaf.fli/nati"
+    static let CHANNEL_NAME = "com.leaf.fli.ios/nati"
     
     public static var viewController = UIViewController()
     var pendingResult:FlutterResult!

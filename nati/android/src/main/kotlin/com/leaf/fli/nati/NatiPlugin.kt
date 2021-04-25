@@ -32,7 +32,7 @@ class NatiPlugin : FlutterPlugin, ActivityAware {
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
     /// when the Flutter Engine is detached from the Activity
-    private lateinit var channel: MethodChannel
+    private var channel: MethodChannel? = null
 
     init {
         sender = IntentSender( /*activity=*/null,  /*applicationContext=*/null)
@@ -47,7 +47,7 @@ class NatiPlugin : FlutterPlugin, ActivityAware {
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        channel.setMethodCallHandler(null)
+
     }
 
     override fun onDetachedFromActivity() {

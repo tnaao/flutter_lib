@@ -101,7 +101,7 @@ public final class MethodCallHandlerImpl implements MethodCallHandler, PluginReg
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         pendingResult = result;
-        if (MxHandled(call.method, gson.toJson(call.arguments)))
+        if (call.arguments != null && MxHandled(call.method, gson.toJson(call.arguments)))
             return;
 
         String action = convertAction((String) call.argument("action"));
@@ -147,6 +147,7 @@ public final class MethodCallHandlerImpl implements MethodCallHandler, PluginReg
 
         if (method.equals(NatiMethodEn.login.getMethod())) {
             LoginEvent args = gson.fromJson(argumentJson, LoginEvent.class);
+            Log.e("login", argumentJson);
             if (args.getPlat() != null) {
                 sender.doLogin(args.getPlat(), new Function1<UmxLoginResultEvent, Unit>() {
                     @Override
@@ -191,6 +192,8 @@ public final class MethodCallHandlerImpl implements MethodCallHandler, PluginReg
                 @Override
                 public Unit invoke(Context context) {
                     final String versionName = CommonUtil.INSTANCE.getAppVersionName(context);
+                    UmxShareResultEvent result = new UmxShareResultEvent();
+                    result.setSucceed(true);
                     pendingResult.success(versionName);
                     return null;
                 }
