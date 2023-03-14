@@ -1,0 +1,21 @@
+name: sweetalertv2
+description: A BEAUTIFUL, RESPONSIVE, CUSTOMIZABLE, ACCESSIBLE REPLACEMENT FOR FLUTTER'S POPUP BOXES.
+version: 0.0.2
+author: Bruno Minervino <contact@brunominervino.com.br>
+homepage: https://github.com/brunominervino/sweetalertv2
+
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  vector_math: ^2.1.4
+  flutter_sequence_animation: ^4.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
