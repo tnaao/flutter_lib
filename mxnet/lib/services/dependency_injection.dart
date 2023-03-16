@@ -4,10 +4,11 @@ import 'package:mxnet/services/abstract/i_otp_service.dart';
 
 enum Flavor { MOCK, PRO }
 
-//Simple DI
+class DefaultRestClient extends RestClient {}
+
 class Injector {
   static final Injector _singleton = new Injector._internal();
-  static Flavor _flavor;
+  static Flavor? _flavor;
 
   static void configure(Flavor flavor) async {
     _flavor = flavor;
@@ -17,12 +18,12 @@ class Injector {
 
   Injector._internal();
 
-  IOTPService get otpService {
+  IOTPService? get otpService {
     switch (_flavor) {
       case Flavor.MOCK:
         return null;
       default:
-        return OTPService(new RestClient());
+        return OTPService(new DefaultRestClient());
     }
   }
 }

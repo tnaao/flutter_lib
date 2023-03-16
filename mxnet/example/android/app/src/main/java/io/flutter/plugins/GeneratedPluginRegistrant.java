@@ -2,6 +2,7 @@ package io.flutter.plugins;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import io.flutter.Log;
 
 import io.flutter.embedding.engine.FlutterEngine;
 
@@ -12,8 +13,52 @@ import io.flutter.embedding.engine.FlutterEngine;
  */
 @Keep
 public final class GeneratedPluginRegistrant {
+  private static final String TAG = "GeneratedPluginRegistrant";
   public static void registerWith(@NonNull FlutterEngine flutterEngine) {
-    flutterEngine.getPlugins().add(new com.leaf.fli.mxnet.MxnetPlugin());
-    flutterEngine.getPlugins().add(new io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin());
+    try {
+      flutterEngine.getPlugins().add(new com.example.flutter_file_downloader.FlutterFileDownloaderPlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin flutter_file_downloader, com.example.flutter_file_downloader.FlutterFileDownloaderPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new com.pisey.flutter_native_player.FlutterNativePlayerPlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin flutter_native_player, com.pisey.flutter_native_player.FlutterNativePlayerPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new io.github.ponnamkarthik.toast.fluttertoast.FlutterToastPlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin fluttertoast, io.github.ponnamkarthik.toast.fluttertoast.FlutterToastPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new com.leaf.fli.mxbase.MxbasePlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin mxbase, com.leaf.fli.mxbase.MxbasePlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new com.leaf.fli.mxnet.MxnetPlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin mxnet, com.leaf.fli.mxnet.MxnetPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new io.flutter.plugins.pathprovider.PathProviderPlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin path_provider_android, io.flutter.plugins.pathprovider.PathProviderPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin shared_preferences_android, io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new com.tekartik.sqflite.SqflitePlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin sqflite, com.tekartik.sqflite.SqflitePlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new io.flutter.plugins.webviewflutter.WebViewFlutterPlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin webview_flutter, io.flutter.plugins.webviewflutter.WebViewFlutterPlugin", e);
+    }
   }
 }

@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UserTokenInfo {
   static const SPKeyPrefix = "UserTokenInfo";
   static const String SP_AC_TOKEN = "$SPKeyPrefix:accessToken";
-  String _token;
+  String? _token;
 
   UserTokenInfo._privateConstructor();
 
@@ -14,7 +14,7 @@ class UserTokenInfo {
   }
 
   bool notLogin() {
-    return _token == null || _token.length < 1;
+    return _token == null || _token!.length < 1;
   }
 
   void checkLogin() {
@@ -27,7 +27,7 @@ class UserTokenInfo {
     return;
   }
 
-  String getToken() {
+  String? getToken() {
     return _token == null ? "" : _token;
   }
 
@@ -48,7 +48,7 @@ class UserTokenInfo {
   }
 
   void doSave(SharedPreferences sp) async {
-    await sp.setString(SP_AC_TOKEN, _token);
+    await sp.setString(SP_AC_TOKEN, _token!);
   }
 }
 
@@ -64,16 +64,16 @@ class FetchDataException implements Exception {
 }
 
 class NetworkServiceResponse<T> {
-  T content;
-  bool success;
-  String message;
+  T? content;
+  bool? success;
+  String? message;
 
   NetworkServiceResponse({this.content, this.success, this.message});
 }
 
 class MappedNetworkServiceResponse<T> {
   dynamic mappedResult;
-  NetworkServiceResponse<T> networkServiceResponse;
+  NetworkServiceResponse<T>? networkServiceResponse;
 
   MappedNetworkServiceResponse(
       {this.mappedResult, this.networkServiceResponse});
