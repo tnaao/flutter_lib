@@ -1,0 +1,39 @@
+PODS:
+  - Flutter (1.0.0)
+  - FSActionSheet (1.0.1)
+  - integration_test (0.0.1):
+    - Flutter
+  - OCMock (3.5)
+  - webview_flutter (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - FSActionSheet
+  - integration_test (from `.symlinks/plugins/integration_test/ios`)
+  - OCMock (= 3.5)
+  - webview_flutter (from `.symlinks/plugins/webview_flutter/ios`)
+
+SPEC REPOS:
+  trunk:
+    - FSActionSheet
+    - OCMock
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  integration_test:
+    :path: ".symlinks/plugins/integration_test/ios"
+  webview_flutter:
+    :path: ".symlinks/plugins/webview_flutter/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  FSActionSheet: 69539289555a515c9cba29a00c91fa3d5d3901aa
+  integration_test: 6eb66a19f7104200dcfdd62bc0077e1b09686e4f
+  OCMock: 4ab4577fc941af31f4a0398f6e7e230cf21fc72a
+  webview_flutter: 3603125dfd3bcbc9d8d418c3f80aeecf331c068b
+
+PODFILE CHECKSUM: 12b810eac96f87beb7ceca356c708a32a0ea231d
+
+COCOAPODS: 1.10.1
