@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mxbase/model/uidata.dart';
 
 class CustomFloat extends StatelessWidget {
-  final IconData icon;
-  final Widget builder;
-  final VoidCallback qrCallback;
+  final IconData? icon;
+  final Widget? builder;
+  final VoidCallback? qrCallback;
   final isMini;
 
   CustomFloat({this.icon, this.builder, this.qrCallback, this.isMini = false});

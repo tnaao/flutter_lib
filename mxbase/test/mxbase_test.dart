@@ -18,6 +18,6 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    expect(await Mxbase.platformVersion, '42');
+    expect('1.0.0', '42');
   });
 }

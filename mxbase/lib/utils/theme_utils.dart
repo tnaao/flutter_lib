@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mxbase/model/uidata.dart';
 
 class ThemeUtils {
   // 默认主题色
-  static const Color defaultColor = Colors.white;
+  static const Color defaultColor = UIData.pureWhite;
 
   // 可选的主题色
   static const List<Color> supportColors = [

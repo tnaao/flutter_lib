@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mxbase/ext/mx_ext_functions.dart';
 import 'package:mxbase/widgets/my_imageview.dart';
 
 class MySliderView extends StatefulWidget {
   final List<String> imgList;
   final double indicatorBottomPadding;
-  final Function onTap;
+  final MxOnValue<int>? onTap;
 
   MySliderView(this.imgList, this.indicatorBottomPadding, {this.onTap});
 
@@ -20,14 +21,14 @@ class _MySliderViewState extends State<MySliderView> {
     for (int i = 0; i < widget.imgList.length; i++) {
       images.add(GestureDetector(
         onTap: () {
-          if (widget.onTap != null) widget.onTap(i);
+          if (widget.onTap != null) widget.onTap!(i);
         },
         child: Container(
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(5.0))),
           child: ClipRect(
-            child: MyCachedImageView(widget.imgList[i]),
+            child: MyNetImageView(widget.imgList[i]),
             clipBehavior: Clip.hardEdge,
           ),
         ),

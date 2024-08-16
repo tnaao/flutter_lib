@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class SimpleSegmListChooser<T> extends StatefulWidget {
   const SimpleSegmListChooser(this.data,
-      {Key key,
+      {Key? key,
       this.onChoosed,
       this.itemLang = 48.0,
       this.width = 0.0,
       this.mainSpace = 0.0,
       this.height = 20.0,
-      @required this.itemBuilder,
+      required this.itemBuilder,
       this.itemCurrentBuilder,
       this.onIndexChoosed})
       : super(key: key);
@@ -16,14 +16,14 @@ class SimpleSegmListChooser<T> extends StatefulWidget {
   static String get route => 'RSegmListChooser';
 
   final List<T> data;
-  final Function onChoosed;
-  final Function onIndexChoosed;
+  final Function? onChoosed;
+  final Function? onIndexChoosed;
   final double itemLang;
   final double width;
   final double height;
   final double mainSpace;
   final IndexedWidgetBuilder itemBuilder;
-  final IndexedWidgetBuilder itemCurrentBuilder;
+  final IndexedWidgetBuilder? itemCurrentBuilder;
 
   @override
   _SimpleSegmListChooserState createState() {
@@ -44,11 +44,11 @@ class _SimpleSegmListChooserState extends State<SimpleSegmListChooser> {
 
   void onItemChoosed(int idx) {
     if (widget.onChoosed != null) {
-      widget.onChoosed(widget.data[idx]);
+      widget.onChoosed!(widget.data[idx]);
     }
 
     if (widget.onIndexChoosed != null) {
-      widget.onIndexChoosed(idx);
+      widget.onIndexChoosed!(idx);
     }
   }
 
@@ -76,7 +76,7 @@ class _SimpleSegmListChooserState extends State<SimpleSegmListChooser> {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: <Widget>[
                 isCurrent && widget.itemCurrentBuilder != null
-                    ? widget.itemCurrentBuilder(context, idx)
+                    ? widget.itemCurrentBuilder!(context, idx)
                     : widget.itemBuilder(context, idx),
                 SizedBox(
                   width: widget.mainSpace,
@@ -86,7 +86,6 @@ class _SimpleSegmListChooserState extends State<SimpleSegmListChooser> {
           );
         },
         itemCount: widget.data.length,
-        itemExtent: widget.itemLang + widget.mainSpace,
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
       ),

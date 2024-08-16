@@ -4,7 +4,7 @@ import 'package:mxbase/model/user_info.dart';
 import 'package:mxbase/widgets/my_imageview.dart';
 
 class MyHorizontalTabStackView extends StatefulWidget {
-  final Key key;
+  final Key? key;
   final double tabsHeight;
   final double tabsWidth;
   final double indicatorWidth;
@@ -21,13 +21,13 @@ class MyHorizontalTabStackView extends StatefulWidget {
   final Curve changePageCurve;
   final Color tabsShadowColor;
   final double tabsElevation;
-  final Function onSelectIdx;
+  final Function? onSelectIdx;
   final int initialIdx;
 
   MyHorizontalTabStackView(
       {this.key,
-      @required this.tabs,
-      @required this.contents,
+      required this.tabs,
+      required this.contents,
       this.tabsHeight = 80,
       this.tabsWidth = 200,
       this.onSelectIdx,
@@ -51,16 +51,16 @@ class MyHorizontalTabStackView extends StatefulWidget {
   static Tab myHTab(String title, bool isCurrent, BuildContext context,
       {double tabWidth = 0.0,
       double tabHeight = 0.0,
-      EdgeInsets padding,
+      EdgeInsets? padding,
       double fontSize = 12.0,
       double indicatorH = 8.0,
-      double indicatorW,
+      double? indicatorW,
       int titlesLen = 0,
       Color indicatorColor = UIData.accentColor,
       Color normalColor = UIData.textGN,
       bool hasVDivider = false}) {
     if (titlesLen > 0) {
-      double w = UserInfo.instance.deviceSize.width;
+      double w = MxBaseUserInfo.instance.deviceSize.width;
       tabWidth = titlesLen == 0
           ? 55
           : w / titlesLen > 55.0
@@ -129,11 +129,10 @@ class MyHorizontalTabStackView extends StatefulWidget {
 class _VerticalTabsState extends State<MyHorizontalTabStackView>
     with TickerProviderStateMixin {
   int _selectedIndex = 0;
-  bool _changePageByTapView;
+  bool? _changePageByTapView;
 
-  AnimationController animationController;
-  Animation<double> animation;
-  PageController pageController = PageController();
+  AnimationController? animationController;
+  Animation<double>? animation;
 
   List<AnimationController> animationControllers = [];
 
@@ -195,7 +194,7 @@ class _VerticalTabsState extends State<MyHorizontalTabStackView>
                                 alignment = Alignment.centerRight;
                               }
 
-                              Widget child;
+                              Widget? child;
                               if (tab.child != null) {
                                 child = tab.child;
                               } else {
@@ -204,7 +203,7 @@ class _VerticalTabsState extends State<MyHorizontalTabStackView>
                                     (tab.icon != null)
                                         ? Column(
                                             children: <Widget>[
-                                              tab.icon,
+                                              tab.icon!,
                                               SizedBox(
                                                 height: 0.0,
                                               )
@@ -212,7 +211,7 @@ class _VerticalTabsState extends State<MyHorizontalTabStackView>
                                           )
                                         : Container(),
                                     (tab.text != null)
-                                        ? Text(tab.text)
+                                        ? Text(tab.text!)
                                         : Container(),
                                   ],
                                 );
@@ -229,9 +228,6 @@ class _VerticalTabsState extends State<MyHorizontalTabStackView>
                                   setState(() {
                                     _selectTab(index);
                                   });
-                                  pageController.animateToPage(index,
-                                      duration: widget.changePageDuration,
-                                      curve: widget.changePageCurve);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -300,6 +296,6 @@ class _VerticalTabsState extends State<MyHorizontalTabStackView>
       animationController.reset();
     }
     animationControllers[index].forward();
-    if (widget.onSelectIdx != null) widget.onSelectIdx(index);
+    if (widget.onSelectIdx != null) widget.onSelectIdx!(index);
   }
 }

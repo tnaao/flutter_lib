@@ -4,7 +4,7 @@ import 'package:mxbase/model/uidata.dart';
 
 class SemengChooser extends StatefulWidget {
   const SemengChooser(this.data,
-      {Key key,
+      {Key? key,
       this.onChoosed,
       this.itemLang = 48.0,
       this.width = 0.0,
@@ -16,7 +16,7 @@ class SemengChooser extends StatefulWidget {
   static String get route => 'RSemengChooser';
 
   final List<dynamic> data;
-  final Function onChoosed;
+  final Function? onChoosed;
   final double itemLang;
   final double width;
   final double height;
@@ -43,7 +43,7 @@ class _SemengChooserState extends State<SemengChooser> {
 
   void onItemChoosed(int idx) {
     if (widget.onChoosed != null) {
-      widget.onChoosed(widget.data[idx]);
+      widget.onChoosed!(widget.data[idx]);
     }
   }
 

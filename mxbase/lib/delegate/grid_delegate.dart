@@ -16,9 +16,9 @@ class XSliverGridDelegate extends SliverGridDelegate {
   /// and `bigCellExtent` must be greater or equal to `smallCellExtent`.
   ///
   XSliverGridDelegate({
-    @required this.crossAxisCount,
-    @required this.bigCellExtent,
-    @required this.smallCellExtent,
+    required this.crossAxisCount,
+    required this.bigCellExtent,
+    required this.smallCellExtent,
     this.mainAxisSpacing = 0.0,
     this.crossAxisSpacing = 0.0,
     this.isFirstCellBig = true
@@ -119,28 +119,28 @@ abstract class _XSliverGridLayout extends SliverGridLayout{
     this.isFirstCellBig,
   });
 
-  final int crossAxisCount;
-  final double smallChildMainAxisExtent;
-  final double bigChildMainAxisExtent;
-  final double smallChildMainAxisStride;
-  final double bigChildMainAxisStride;
-  final bool isFirstCellBig;
+  final int? crossAxisCount;
+  final double? smallChildMainAxisExtent;
+  final double? bigChildMainAxisExtent;
+  final double? smallChildMainAxisStride;
+  final double? bigChildMainAxisStride;
+  final bool? isFirstCellBig;
 
   @override
   int getMinChildIndexForScrollOffset(double scrollOffset) {
-    if(bigChildMainAxisStride > 0.0){
-      final mainAxisCount = (scrollOffset ~/ (bigChildMainAxisStride + smallChildMainAxisStride)) * 2;
-      return math.max(0, ((crossAxisCount) * mainAxisCount));
+    if(bigChildMainAxisStride! > 0.0){
+      final mainAxisCount = (scrollOffset ~/ (bigChildMainAxisStride! + smallChildMainAxisStride!)) * 2;
+      return math.max(0, (crossAxisCount! * mainAxisCount));
     }
     return 0;
   }
 
   @override
   int getMaxChildIndexForScrollOffset(double scrollOffset) {
-    if (bigChildMainAxisStride > 0.0) {
-      double extentDiff = (bigChildMainAxisExtent - smallChildMainAxisExtent).abs();
-      final int mainAxisCount = ((scrollOffset / (smallChildMainAxisStride + (extentDiff / 2))).ceil());
-      return math.max(0, crossAxisCount * mainAxisCount - 1);
+    if (bigChildMainAxisStride! > 0.0) {
+      double extentDiff = (bigChildMainAxisExtent! - smallChildMainAxisExtent!).abs();
+      final int mainAxisCount = ((scrollOffset / (smallChildMainAxisStride! + (extentDiff / 2))).ceil());
+      return math.max(0, crossAxisCount! * mainAxisCount - 1);
     }
     return 0;
   }
@@ -148,10 +148,10 @@ abstract class _XSliverGridLayout extends SliverGridLayout{
   @override
   double computeMaxScrollOffset(int childCount) {
     assert(childCount != null);
-    final int mainAxisCount = ((childCount - 1) ~/ crossAxisCount) + 1;
-    final double mainAxisSpacing = smallChildMainAxisStride - (smallChildMainAxisExtent);
+    final int mainAxisCount = ((childCount - 1) ~/ crossAxisCount!) + 1;
+    final double mainAxisSpacing = smallChildMainAxisStride! - smallChildMainAxisExtent!;
 
-    int lastRowChildCount = crossAxisCount - ((mainAxisCount * crossAxisCount) - childCount);
+    int lastRowChildCount = crossAxisCount! - ((mainAxisCount * crossAxisCount!) - childCount);
     int smallChildMainAxisCount = (mainAxisCount ~/ 2);
     int bigChildMainAxisCount = (mainAxisCount ~/ 2);
 
@@ -159,7 +159,7 @@ abstract class _XSliverGridLayout extends SliverGridLayout{
       if(mainAxisCount %2 != 0)
         bigChildMainAxisCount = (mainAxisCount ~/ 2) + 1;
     }else{
-      if(!isFirstCellBig){
+      if(!isFirstCellBig!){
         if(mainAxisCount %2 != 0)
           smallChildMainAxisCount = (mainAxisCount ~/ 2) + 1;
       }else{
@@ -167,8 +167,8 @@ abstract class _XSliverGridLayout extends SliverGridLayout{
           bigChildMainAxisCount = (mainAxisCount ~/ 2) + 1;
       }
     }
-    double smallChildMaxScrollOffset = (smallChildMainAxisStride) * smallChildMainAxisCount - mainAxisSpacing;
-    double bigChildMaxScrollOffset = (bigChildMainAxisStride) * bigChildMainAxisCount - mainAxisSpacing;
+    double smallChildMaxScrollOffset = smallChildMainAxisStride! * smallChildMainAxisCount - mainAxisSpacing;
+    double bigChildMaxScrollOffset = bigChildMainAxisStride! * bigChildMainAxisCount - mainAxisSpacing;
     return (bigChildMaxScrollOffset + smallChildMaxScrollOffset);
   }
 }
@@ -184,32 +184,32 @@ class _XSliverGridLayout1 extends _XSliverGridLayout{
     this.bigChildMainAxisStride,
     this.isFirstCellBig
   }): super(
-    crossAxisCount : crossAxisCount,
-    smallChildMainAxisExtent: smallChildMainAxisExtent,
-    bigChildMainAxisExtent:bigChildMainAxisExtent,
-    smallChildMainAxisStride: smallChildMainAxisStride,
-    bigChildMainAxisStride: bigChildMainAxisStride,
-    isFirstCellBig: isFirstCellBig,
+      crossAxisCount : crossAxisCount,
+      smallChildMainAxisExtent: smallChildMainAxisExtent,
+      bigChildMainAxisExtent:bigChildMainAxisExtent,
+      smallChildMainAxisStride: smallChildMainAxisStride,
+      bigChildMainAxisStride: bigChildMainAxisStride,
+      isFirstCellBig: isFirstCellBig,
   );
 
-  final int crossAxisCount;
-  final double crossAxisStride;
-  final double crossAxisExtent;
-  final double smallChildMainAxisExtent;
-  final double bigChildMainAxisExtent;
-  final double smallChildMainAxisStride;
-  final double bigChildMainAxisStride;
-  final bool isFirstCellBig;
+  final int? crossAxisCount;
+  final double? crossAxisStride;
+  final double? crossAxisExtent;
+  final double? smallChildMainAxisExtent;
+  final double? bigChildMainAxisExtent;
+  final double? smallChildMainAxisStride;
+  final double? bigChildMainAxisStride;
+  final bool? isFirstCellBig;
 
   @override
   SliverGridGeometry getGeometryForChildIndex(int index) {
     double mainAxisStart = 0;
     double crossAxisStart = 0;
-    double mainAxisExtent = smallChildMainAxisExtent;
+    double? mainAxisExtent = smallChildMainAxisExtent;
 
-    int row = index ~/ crossAxisCount;
-    int col = (index % crossAxisCount);
-    double extentDiff = (bigChildMainAxisExtent - smallChildMainAxisExtent).abs();
+    int row = index ~/ crossAxisCount!;
+    int col = (index % crossAxisCount!);
+    double extentDiff = (bigChildMainAxisExtent! - smallChildMainAxisExtent!).abs();
 
     double offset = 0;
     if(row % 2 == 0){
@@ -227,14 +227,14 @@ class _XSliverGridLayout1 extends _XSliverGridLayout{
         offset = ((row - 1) * (extentDiff / 2));
       }
     }
-    mainAxisStart = (row * smallChildMainAxisStride) + (offset);
-    crossAxisStart = col * crossAxisStride;
+    mainAxisStart = (row * smallChildMainAxisStride!) + (offset);
+    crossAxisStart = col * crossAxisStride!;
 
     return SliverGridGeometry(
       scrollOffset: mainAxisStart,
       crossAxisOffset: crossAxisStart,
-      mainAxisExtent: mainAxisExtent,
-      crossAxisExtent: crossAxisExtent,
+      mainAxisExtent: mainAxisExtent!,
+      crossAxisExtent: crossAxisExtent!,
     );
   }
 }
@@ -250,32 +250,32 @@ class _XSliverGridLayout2 extends _XSliverGridLayout{
     this.bigChildMainAxisStride,
     this.isFirstCellBig
   }): super(
-    crossAxisCount : crossAxisCount,
-    smallChildMainAxisExtent: smallChildMainAxisExtent,
-    bigChildMainAxisExtent:bigChildMainAxisExtent,
-    smallChildMainAxisStride: smallChildMainAxisStride,
-    bigChildMainAxisStride: bigChildMainAxisStride,
-    isFirstCellBig: isFirstCellBig,
+      crossAxisCount : crossAxisCount,
+      smallChildMainAxisExtent: smallChildMainAxisExtent,
+      bigChildMainAxisExtent:bigChildMainAxisExtent,
+      smallChildMainAxisStride: smallChildMainAxisStride,
+      bigChildMainAxisStride: bigChildMainAxisStride,
+      isFirstCellBig: isFirstCellBig,
   );
 
-  final int crossAxisCount;
-  final double crossAxisStride;
-  final double crossAxisExtent;
-  final double smallChildMainAxisExtent;
-  final double bigChildMainAxisExtent;
-  final double smallChildMainAxisStride;
-  final double bigChildMainAxisStride;
-  final bool isFirstCellBig;
+  final int? crossAxisCount;
+  final double? crossAxisStride;
+  final double? crossAxisExtent;
+  final double? smallChildMainAxisExtent;
+  final double? bigChildMainAxisExtent;
+  final double? smallChildMainAxisStride;
+  final double? bigChildMainAxisStride;
+  final bool? isFirstCellBig;
 
   @override
   SliverGridGeometry getGeometryForChildIndex(int index) {
     double mainAxisStart = 0;
     double crossAxisStart = 0;
-    double mainAxisExtent = smallChildMainAxisExtent;
+    double? mainAxisExtent = smallChildMainAxisExtent;
 
-    int row = index ~/ crossAxisCount;
-    int col = (index % crossAxisCount);
-    double extentDiff = (bigChildMainAxisExtent - smallChildMainAxisExtent).abs();
+    int row = index ~/ crossAxisCount!;
+    int col = (index % crossAxisCount!);
+    double extentDiff = (bigChildMainAxisExtent! - smallChildMainAxisExtent!).abs();
 
     double offset = 0;
     if(row % 2 == 0){
@@ -293,14 +293,14 @@ class _XSliverGridLayout2 extends _XSliverGridLayout{
         offset = row * (extentDiff / 2) + (extentDiff / 2);
       }
     }
-    mainAxisStart = (row * smallChildMainAxisStride) + (offset);
-    crossAxisStart = col * crossAxisStride;
+    mainAxisStart = (row * smallChildMainAxisStride!) + (offset);
+    crossAxisStart = col * crossAxisStride!;
 
     return SliverGridGeometry(
       scrollOffset: mainAxisStart,
       crossAxisOffset: crossAxisStart,
-      mainAxisExtent: mainAxisExtent,
-      crossAxisExtent: crossAxisExtent,
+      mainAxisExtent: mainAxisExtent!,
+      crossAxisExtent: crossAxisExtent!,
     );
   }
 }

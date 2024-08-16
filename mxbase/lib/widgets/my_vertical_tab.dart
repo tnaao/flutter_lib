@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mxbase/model/uidata.dart';
+import 'package:mxbase/ext/mx_ext_functions.dart';
+import 'package:velocity_x/velocity_x.dart';
+import 'my_imageview.dart';
 
 class MyVerticalTabs extends StatefulWidget {
-  final Key key;
+  final Key? key;
   final double tabsWidth;
   final double itemExtent;
   final double indicatorWidth;
@@ -14,16 +18,17 @@ class MyVerticalTabs extends StatefulWidget {
   final Color selectedTabBackgroundColor;
   final Color unselectedTabBackgroundColor;
   final Color dividerColor;
+  final Color? bgColor;
   final Duration changePageDuration;
   final Curve changePageCurve;
   final Color tabsShadowColor;
   final double tabsElevation;
-  final Function onSelectIdx;
+  final Function? onSelectIdx;
 
   MyVerticalTabs(
       {this.key,
-      @required this.tabs,
-      @required this.contents,
+      required this.tabs,
+      required this.contents,
       this.tabsWidth = 200,
       this.itemExtent = 50,
       this.onSelectIdx,
@@ -38,36 +43,72 @@ class MyVerticalTabs extends StatefulWidget {
       this.changePageCurve = Curves.easeInOut,
       this.changePageDuration = const Duration(milliseconds: 300),
       this.tabsShadowColor = Colors.black54,
-      this.tabsElevation = 2.0})
+      this.tabsElevation = 2.0,
+      this.bgColor})
       : assert(
             tabs != null && contents != null && tabs.length == contents.length),
         super(key: key);
 
-  static Tab myVTab(String title, bool isCurrent, BuildContext context) {
+  static Tab myVTab(String title, bool isCurrent, BuildContext context,
+      {Color indicatorColor = UIData.primaryColor,
+      Color titleNColor = UIData.black,
+      num indicatorH = 100,
+      num indicatorW = 8}) {
+    var isZhg = true;
+
+    var textWidget = Text(
+      title,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+          fontSize: 12.0,
+          color: isZhg && isCurrent
+              ? UIData.pureWhite
+              : isCurrent
+                  ? indicatorColor
+                  : titleNColor),
+    );
+
     return Tab(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.fromLTRB(0.0, 5.0, 2.0, 5.0),
-            decoration: isCurrent
-                ? BoxDecoration(color: Theme.of(context).primaryColor)
-                : null,
-            width: 8.0,
-            height: 100.0,
-          ),
-          Container(
-            width: 60,
-            child: Text(
-              title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontSize: 12.0, color: Theme.of(context).primaryColor),
-            ),
+      child: Stack(
+        children: [
+          !isCurrent
+              ? SizedBox()
+              : Row(
+                  children: [
+                    Expanded(
+                        child: MyAssetImageView(
+                      'ic_shop_cate_zhg_bg.png',
+                      width: 86.hsp,
+                      fit: BoxFit.fill,
+                    )
+                            .box
+                            .color(Colors.transparent)
+                            .padding(EdgeInsets.fromLTRB(2.0, .0, 2.0, 0.0))
+                            .make())
+                  ],
+                ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              isZhg && isCurrent
+                  ? SizedBox()
+                  : Container(
+                      margin: EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
+                      decoration: isCurrent
+                          ? BoxDecoration(color: indicatorColor)
+                          : null,
+                      width: indicatorW.toDouble(),
+                      height: indicatorH.toDouble(),
+                    ),
+              Expanded(
+                  child: Container(
+                child: isZhg ? textWidget.centered() : textWidget,
+              )),
+            ],
           )
         ],
-      ),
+      ).box.height(isZhg && isCurrent ? 48.vsp : double.infinity).make(),
     );
   }
 
@@ -78,11 +119,11 @@ class MyVerticalTabs extends StatefulWidget {
 class _VerticalTabsState extends State<MyVerticalTabs>
     with TickerProviderStateMixin {
   int _selectedIndex = 0;
-  bool _changePageByTapView;
+  bool? _changePageByTapView;
 
-  AnimationController animationController;
-  Animation<double> animation;
-  Animation<RelativeRect> rectAnimation;
+  AnimationController? animationController;
+  Animation<double>? animation;
+  Animation<RelativeRect>? rectAnimation;
 
   List<AnimationController> animationControllers = [];
 
@@ -106,21 +147,13 @@ class _VerticalTabsState extends State<MyVerticalTabs>
 
   @override
   Widget build(BuildContext context) {
-//    Border border = Border(
-//        right: BorderSide(
-//            width: 0.5, color: widget.dividerColor));
-//    if (widget.direction == TextDirection.rtl) {
-//      border = Border(
-//          left: BorderSide(
-//              width: 0.5, color: widget.dividerColor));
-//    }
-
     return Directionality(
       textDirection: widget.direction,
       child: Column(
         children: <Widget>[
           Expanded(
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Material(
                   child: Container(
@@ -136,7 +169,7 @@ class _VerticalTabsState extends State<MyVerticalTabs>
                           alignment = Alignment.centerRight;
                         }
 
-                        Widget child;
+                        Widget? child;
                         if (tab.child != null) {
                           child = tab.child;
                         } else {
@@ -145,14 +178,14 @@ class _VerticalTabsState extends State<MyVerticalTabs>
                               (tab.icon != null)
                                   ? Row(
                                       children: <Widget>[
-                                        tab.icon,
+                                        tab.icon!,
                                         SizedBox(
                                           width: 0.0,
                                         )
                                       ],
                                     )
                                   : Container(),
-                              (tab.text != null) ? Text(tab.text) : Container(),
+                              (tab.text != null) ? Text(tab.text!) : Container(),
                             ],
                           );
                         }
@@ -205,6 +238,7 @@ class _VerticalTabsState extends State<MyVerticalTabs>
                   elevation: widget.tabsElevation,
                   shadowColor: widget.tabsShadowColor,
                   shape: BeveledRectangleBorder(),
+                  color: widget.bgColor,
                 ),
                 Expanded(
                     child: IndexedStack(
@@ -230,6 +264,6 @@ class _VerticalTabsState extends State<MyVerticalTabs>
   void _selectTab(index) {
     _selectedIndex = index;
 
-    if (widget.onSelectIdx != null) widget.onSelectIdx(index);
+    if (widget.onSelectIdx != null) widget.onSelectIdx!(index);
   }
 }

@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:mxbase/model/uidata.dart';
+import 'package:mxbase/ext/mx_ext_functions.dart';
 import 'package:mxbase/model/user_info.dart';
 import 'package:mxbase/widgets/my_imageview.dart';
+import 'package:mxbase/event/mx_event.dart';
+
+class MyHorizontalTabGoEvent {
+  final Key? key;
+
+  final int? idx;
+
+  MyHorizontalTabGoEvent({this.key, this.idx});
+}
 
 class MyHorizontalTabs extends StatefulWidget {
-  final Key key;
+  final Key? key;
+
   final double tabsHeight;
   final double tabsWidth;
   final double indicatorWidth;
@@ -21,13 +32,14 @@ class MyHorizontalTabs extends StatefulWidget {
   final Curve changePageCurve;
   final Color tabsShadowColor;
   final double tabsElevation;
-  final Function onSelectIdx;
+  final Function? onSelectIdx;
+
   final int initialIdx;
 
   MyHorizontalTabs(
       {this.key,
-      @required this.tabs,
-      @required this.contents,
+      required this.tabs,
+      required this.contents,
       this.tabsHeight = 80,
       this.tabsWidth = 200,
       this.onSelectIdx,
@@ -51,74 +63,92 @@ class MyHorizontalTabs extends StatefulWidget {
   static Tab myHTab(String title, bool isCurrent, BuildContext context,
       {double tabWidth = 0.0,
       double tabHeight = 0.0,
-      EdgeInsets padding,
-      double fontSize = 12.0,
+      EdgeInsets? padding,
+      double fontSize = 14.0,
       double indicatorH = 8.0,
-      double indicatorW,
+      double topPadding = 15.0,
+      double? indicatorW,
       double barWidth = 0.0,
       int titlesLen = 0,
       Color indicatorColor = UIData.accentColor,
+      Color? titleColor,
+      double? h,
       Color normalColor = UIData.textGN,
+      Color highLightColor = UIData.accentColor,
+      String? indicatorIcon,
       bool hasVDivider = false}) {
-    if (titlesLen > 0) {
-      double w = barWidth > 1 ? barWidth : UserInfo.instance.deviceSize.width;
-      tabWidth = titlesLen == 0
-          ? 55
-          : w / titlesLen > 55.0
-              ? w / titlesLen
-              : 55.0 * titlesLen / 2;
-    }
+    double fSize = isCurrent ? fontSize + 1 : fontSize;
+    double w =
+        barWidth > 1 ? barWidth : MxBaseUserInfo.instance.deviceSize.width;
+    tabWidth = titlesLen != 0
+        ? w / titlesLen > 85
+            ? w / titlesLen
+            : '$title'.textWidth(style: TextStyle(fontSize: fSize))
+        : '$title'.textWidth(style: TextStyle(fontSize: fSize));
+
     return Tab(
         key: UniqueKey(),
+        height: h,
+        iconMargin: EdgeInsets.zero,
         child: Container(
           padding: padding,
-          width: tabWidth > 0 ? tabWidth : null,
+          width: tabWidth > 100
+              ? tabWidth - 40.0
+              : '${title}'.length * 25.toDouble(),
           decoration: hasVDivider
               ? BoxDecoration(
                   border: Border(
                       right: BorderSide(
                           color: UIData.lineBg, width: UIData.lineH)))
               : null,
-          child: Stack(
+          child: Column(
             children: <Widget>[
-              Center(
-                child: SizedBox.fromSize(
-                  size: Size(tabWidth > 100 ? tabWidth - 40.0 : 60.0,
-                      tabHeight > 12.0 ? tabHeight : 18.0),
-                  child: Center(
-                    child: Text(
-                      title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: isCurrent ? fontSize + 1.0 : fontSize,
-                          color: isCurrent ? indicatorColor : normalColor),
-                    ),
+              SizedBox.fromSize(
+                size: Size(
+                    tabWidth > 100
+                        ? tabWidth
+                        : '${title}'.length * 35.toDouble(),
+                    tabHeight > 12.0 ? tabHeight : 30.vsp),
+                child: Center(
+                  child: Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: fSize,
+                        fontWeight:
+                            isCurrent ? FontWeight.w500 : FontWeight.normal,
+                        color: titleColor != null
+                            ? titleColor
+                            : isCurrent
+                                ? highLightColor
+                                : normalColor),
                   ),
                 ),
               ),
-              Column(
-                children: <Widget>[
-                  Expanded(
-                    child: SizedBox(
-                      width: tabWidth > 0 ? tabWidth : 20,
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
-                    height: indicatorH,
-                    width: indicatorW,
-                    child: MyAssetImageView(
-                      '',
-                      color: isCurrent ? indicatorColor : Colors.transparent,
-                      width: indicatorW,
-                      radius: indicatorH / 2,
-                    ),
-                  ),
-                ],
-              )
+              Container(
+                margin: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
+                height: indicatorH,
+                width: indicatorW,
+                child: indicatorIcon.textEmpty()
+                    ? MyAssetImageView(
+                        '',
+                        color: isCurrent ? indicatorColor : Colors.transparent,
+                        width: indicatorW,
+                        radius: indicatorH / 2,
+                      )
+                    : isCurrent
+                        ? MyAssetImageView(
+                            '$indicatorIcon',
+                            width: indicatorW,
+                            height: indicatorH,
+                            fit: BoxFit.fill,
+                          )
+                        : SizedBox(),
+              ),
             ],
+            mainAxisAlignment: MainAxisAlignment.end,
           ),
         ));
   }
@@ -130,12 +160,14 @@ class MyHorizontalTabs extends StatefulWidget {
 class _VerticalTabsState extends State<MyHorizontalTabs>
     with TickerProviderStateMixin {
   int _selectedIndex = 0;
-  bool _changePageByTapView;
 
-  AnimationController animationController;
-  Animation<double> animation;
-  PageController pageController = PageController();
+  bool? _changePageByTapView;
 
+  AnimationController? animationController;
+
+  Animation<double>? animation;
+
+  late PageController pageController;
   List<AnimationController> animationControllers = [];
 
   ScrollPhysics pageScrollPhysics = AlwaysScrollableScrollPhysics();
@@ -143,6 +175,8 @@ class _VerticalTabsState extends State<MyHorizontalTabs>
   @override
   void initState() {
     super.initState();
+
+    pageController = PageController(initialPage: widget.initialIdx);
 
     for (int i = 0; i < widget.tabs.length; i++) {
       animationControllers.add(AnimationController(
@@ -153,9 +187,25 @@ class _VerticalTabsState extends State<MyHorizontalTabs>
 
     if (widget.disabledChangePageFromContentView == true)
       pageScrollPhysics = NeverScrollableScrollPhysics();
-
     _selectedIndex = widget.initialIdx;
     _selectTab(_selectedIndex);
+    this.initListener();
+  }
+
+  void initListener() async {
+    AppHolder.eventBus.on<MyHorizontalTabGoEvent>().listen((event) {
+      if (event.key == widget.key) {
+        if (event.idx! < widget.contents.length) {
+          _changePageByTapView = true;
+          setState(() {
+            _selectTab(event.idx);
+          });
+          pageController.animateToPage(event.idx!,
+              duration: widget.changePageDuration,
+              curve: widget.changePageCurve);
+        }
+      }
+    });
   }
 
   @override
@@ -169,101 +219,99 @@ class _VerticalTabsState extends State<MyHorizontalTabs>
               children: <Widget>[
                 SizedBox.fromSize(
                   child: Container(
-                    color: Colors.white,
-                    child: Center(
-                      child: Material(
-                        child: Container(
-                          height: widget.tabsHeight,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-//                      itemExtent: widget.tabsWidth,
-                            itemCount: widget.tabs.length,
-                            itemBuilder: (context, index) {
-                              Tab tab = widget.tabs[index];
+                    color: widget.unselectedTabBackgroundColor,
+                    child: Material(
+                      child: Container(
+                        height: widget.tabsHeight,
+                        color: widget.unselectedTabBackgroundColor,
+                        child: ListView.builder(
+                          shrinkWrap: false,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: widget.tabs.length,
+                          itemBuilder: (context, index) {
+                            Tab tab = widget.tabs[index];
 
-                              Alignment alignment = Alignment.centerLeft;
-                              if (widget.direction == TextDirection.rtl) {
-                                alignment = Alignment.centerRight;
-                              }
+                            Alignment alignment = Alignment.centerLeft;
+                            if (widget.direction == TextDirection.rtl) {
+                              alignment = Alignment.centerRight;
+                            }
 
-                              Widget child;
-                              if (tab.child != null) {
-                                child = tab.child;
-                              } else {
-                                child = Column(
-                                  children: <Widget>[
-                                    (tab.icon != null)
-                                        ? Column(
-                                            children: <Widget>[
-                                              tab.icon,
-                                              SizedBox(
-                                                height: 0.0,
-                                              )
-                                            ],
-                                          )
-                                        : Container(),
-                                    (tab.text != null)
-                                        ? Text(tab.text)
-                                        : Container(),
-                                  ],
-                                );
-                              }
-
-                              Color itemBGColor =
-                                  widget.unselectedTabBackgroundColor;
-                              if (_selectedIndex == index)
-                                itemBGColor = widget.selectedTabBackgroundColor;
-
-                              return GestureDetector(
-                                onTap: () {
-                                  _changePageByTapView = true;
-                                  setState(() {
-                                    _selectTab(index);
-                                  });
-                                  pageController.animateToPage(index,
-                                      duration: widget.changePageDuration,
-                                      curve: widget.changePageCurve);
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: itemBGColor,
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      ScaleTransition(
-                                        child: Container(
-                                          height: widget.indicatorWidth,
-//                                    width: widget.tabsWidth,
-                                          color: widget.indicatorColor,
-                                        ),
-                                        scale:
-                                            Tween(begin: 0.0, end: 1.0).animate(
-                                          new CurvedAnimation(
-                                            parent: animationControllers[index],
-                                            curve: Curves.elasticOut,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          alignment: alignment,
-                                          padding: EdgeInsets.all(0.0),
-                                          child: child,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                            Widget? child;
+                            if (tab.child != null) {
+                              child = tab.child;
+                            } else {
+                              child = Column(
+                                children: <Widget>[
+                                  (tab.icon != null)
+                                      ? Column(
+                                          children: <Widget>[
+                                            tab.icon!,
+                                            SizedBox(
+                                              height: 0.0,
+                                            )
+                                          ],
+                                        )
+                                      : Container(),
+                                  (tab.text != null)
+                                      ? Text(tab.text!)
+                                      : Container(),
+                                ],
                               );
-                            },
-                          ),
+                            }
+
+                            Color itemBGColor =
+                                widget.unselectedTabBackgroundColor;
+                            if (_selectedIndex == index)
+                              itemBGColor = widget.selectedTabBackgroundColor;
+
+                            return GestureDetector(
+                              onTap: () {
+                                _changePageByTapView = true;
+                                setState(() {
+                                  _selectTab(index);
+                                });
+                                pageController.animateToPage(index,
+                                    duration: widget.changePageDuration,
+                                    curve: widget.changePageCurve);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: itemBGColor,
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    ScaleTransition(
+                                      child: Container(
+                                        height: widget.indicatorWidth,
+//                                    width: widget.tabsWidth,
+                                        color: widget.indicatorColor,
+                                      ),
+                                      scale:
+                                          Tween(begin: 0.0, end: 1.0).animate(
+                                        new CurvedAnimation(
+                                          parent: animationControllers[index],
+                                          curve: Curves.elasticOut,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        alignment: alignment,
+                                        padding: EdgeInsets.all(0.0),
+                                        child: child,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                        elevation: widget.tabsElevation,
-                        shadowColor: widget.tabsShadowColor,
-                        shape: BeveledRectangleBorder(),
                       ),
+                      elevation: widget.tabsElevation,
+                      shadowColor: Colors.transparent,
+                      shape: BeveledRectangleBorder(),
                     ),
                   ),
                   size: Size.fromHeight(widget.tabsHeight),
@@ -301,7 +349,7 @@ class _VerticalTabsState extends State<MyHorizontalTabs>
     );
   }
 
-  void _selectTab(index) {
+  void _selectTab(index, {bool noCallback = false}) {
     print('horizon tab select index ${index}');
     int selIndex = index >= widget.contents.length ? 0 : index;
     setState(() {
@@ -312,6 +360,8 @@ class _VerticalTabsState extends State<MyHorizontalTabs>
       animationController.reset();
     }
     animationControllers[index].forward();
-    if (widget.onSelectIdx != null) widget.onSelectIdx(index);
+
+    if (noCallback) return;
+    if (widget.onSelectIdx != null) widget.onSelectIdx!(index);
   }
 }

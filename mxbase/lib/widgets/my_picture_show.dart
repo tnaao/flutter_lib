@@ -2,26 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:mxbase/widgets/my_imageview.dart';
 
 class MyPictureShow extends StatelessWidget {
-  final List<String> picList;
+  final List<String>? picList;
 
   MyPictureShow({this.picList});
 
   Widget build(BuildContext context) {
     return Container(
       child: GridView.count(
-        crossAxisCount: picList.length >= 3
+        crossAxisCount: picList!.length >= 3
             ? 3
-            : picList.length < 2
+            : picList!.length < 2
                 ? 1
                 : 2,
         children: List.generate(
-          picList.length,
+          picList!.length,
           (index) => GestureDetector(
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(1.0),
-                child: MyCachedImageView(
-                  picList[index],
+                child: MyNetImageView(
+                  picList![index],
                 ),
               ),
             ),
@@ -38,11 +38,11 @@ class MyPictureShow extends StatelessWidget {
 }
 
 class NinePicture<T> extends PopupRoute<T> {
-  final String barrierLabel;
-  final List picList;
+  final String? barrierLabel;
+  final List? picList;
   final int index;
-  int startX;
-  int endX;
+  int? startX;
+  int? endX;
 
   NinePicture(this.picList, this.index, {this.barrierLabel});
 
@@ -56,14 +56,14 @@ class NinePicture<T> extends PopupRoute<T> {
   @override
   bool get barrierDismissible => true;
 
-  AnimationController _animationController;
+  AnimationController? _animationController;
 
   @override
   AnimationController createAnimationController() {
     assert(_animationController == null);
     _animationController =
-        BottomSheet.createAnimationController(navigator.overlay);
-    return _animationController;
+        BottomSheet.createAnimationController(navigator!.overlay!);
+    return _animationController!;
   }
 
   @override
@@ -75,7 +75,7 @@ class NinePicture<T> extends PopupRoute<T> {
       child: GestureDetector(
         child: AnimatedBuilder(
           animation: animation,
-          builder: (BuildContext context, Widget child) => GestureDetector(
+          builder: (BuildContext context, Widget? child) => GestureDetector(
             onTap: () {
               Navigator.pop(context);
             },
@@ -88,7 +88,7 @@ class NinePicture<T> extends PopupRoute<T> {
 }
 
 class _PictureWidget extends StatefulWidget {
-  final List picList;
+  final List? picList;
   final int index;
 
   _PictureWidget(this.picList, this.index);
@@ -121,8 +121,8 @@ class _PictureWidgetState extends State<_PictureWidget> {
           children: <Widget>[
             GestureDetector(
               child: Center(
-                child: MyCachedImageView(
-                  widget.picList[index],
+                child: MyNetImageView(
+                  widget.picList![index],
                   fit: BoxFit.cover,
                 ),
               ),
@@ -145,7 +145,7 @@ class _PictureWidgetState extends State<_PictureWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: List.generate(
-                    widget.picList.length,
+                    widget.picList!.length,
                     (i) => GestureDetector(
                       child: CircleAvatar(
                         foregroundColor: Theme.of(context).primaryColor,
@@ -176,12 +176,12 @@ class _PictureWidgetState extends State<_PictureWidget> {
     if (delta > 50) {
       setState(() {
         index--;
-        index = index.clamp(0, widget.picList.length - 1);
+        index = index.clamp(0, widget.picList!.length - 1);
       });
     } else if (delta < 50) {
       setState(() {
         index++;
-        index = index.clamp(0, widget.picList.length - 1);
+        index = index.clamp(0, widget.picList!.length - 1);
       });
     }
   }

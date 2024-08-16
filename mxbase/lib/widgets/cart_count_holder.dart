@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:mxbase/model/uidata.dart';
+import 'package:mxbase/ext/mx_ext_functions.dart';
 import 'package:mxbase/widgets/my_imageview.dart';
+import 'package:velocity_x/velocity_x.dart';
+import 'alert_input_view.dart';
 
 class CartCountHolder extends StatefulWidget {
   final int count;
+  final int maxCount;
   final Function upCount;
   final double size;
-  final String iconPlus;
-  final String iconMinus;
+  final String? iconPlus;
+  final String? iconMinus;
 
   @override
   _CartCountHolderState createState() {
@@ -15,14 +19,14 @@ class CartCountHolder extends StatefulWidget {
   }
 
   CartCountHolder(this.count, this.upCount,
-      {this.size = 25.0, this.iconMinus, this.iconPlus});
+      {this.size = 25.0, this.iconMinus, this.iconPlus, this.maxCount = 0});
 }
 
 class _CartCountHolderState extends State<CartCountHolder> {
-  int count;
-  Function upCount;
+  late int count;
+  late Function upCount;
   bool editing = false;
-  double _size;
+  double? _size;
 
   @override
   void initState() {
@@ -39,7 +43,7 @@ class _CartCountHolderState extends State<CartCountHolder> {
         children: <Widget>[
           GestureDetector(
             onTap: () {
-              if (count > 0)
+              if (count > 1)
                 setState(() {
                   count = --count;
                 });
@@ -54,8 +58,8 @@ class _CartCountHolderState extends State<CartCountHolder> {
                 child: Center(
                   child: MyAssetImageView(
                     widget.iconMinus,
-                    width: _size * 0.37,
-                    heigh: _size * 0.37,
+                    width: _size! * 0.37,
+                    height: _size! * 0.37,
                   ),
                 ),
               ),
@@ -67,7 +71,7 @@ class _CartCountHolderState extends State<CartCountHolder> {
                     top: BorderSide(color: UIData.textGL),
                     bottom: BorderSide(color: UIData.textGL))),
             child: SizedBox(
-              width: _size * 2,
+              width: _size! * 2,
               height: _size,
               child: Center(
                 child: Text(
@@ -79,14 +83,37 @@ class _CartCountHolderState extends State<CartCountHolder> {
                 ),
               ),
             ),
-          ),
+          ).onTap(() {
+            showDialog(
+                context: context,
+                builder: (ctx) {
+                  return AlertInputView(
+                    title: '请输入数量',
+                    isNumber: true,
+                    isUnsignedInteger: true,
+                    maxCount: widget.maxCount,
+                    onCancel: () {
+                      context.back();
+                    },
+                    onConfirm: (text) {
+                      if (!text.isEmptyOrNull) {
+                        this.upCount(int.parse(text));
+                      }
+                    },
+                  );
+                });
+          }),
           GestureDetector(
             onTap: () {
-              ++count;
-              upCount(count);
+              if (widget.maxCount > 0 && count + 1 > widget.maxCount) {
+                UIData.cartMaxCountLimit.toast();
+                return;
+              }
               setState(() {
+                ++count;
                 editing = !editing;
               });
+              upCount(count);
             },
             child: Container(
               decoration:
@@ -97,8 +124,8 @@ class _CartCountHolderState extends State<CartCountHolder> {
                   child: Center(
                     child: MyAssetImageView(
                       widget.iconPlus,
-                      width: _size * 0.37,
-                      heigh: _size * 0.37,
+                      width: _size! * 0.37,
+                      height: _size! * 0.37,
                     ),
                   )),
             ),

@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:mxbase/model/uidata.dart';
+import 'package:mxbase/ext/common.dart';
+import 'package:mxbase/mxbase.dart';
 
 class MyBlackText extends StatelessWidget {
-  final String text;
-  final fontSize;
-  final FontWeight weight;
+  final String? text;
+
+  final num size;
+  final FontWeight? weight;
+
   final int darkLevel;
   final int maxLen;
   final int lines;
 
   const MyBlackText(this.text,
-      {Key key,
-      this.fontSize = 14.0,
+      {Key? key,
+      this.size = 14,
       this.weight,
       this.darkLevel = 1,
       this.maxLen = 0,
@@ -23,7 +27,10 @@ class MyBlackText extends StatelessWidget {
     var textColor = UIData.black;
     switch (this.darkLevel) {
       case 2:
-        textColor = Color(0xff4C4C4C);
+        textColor = Color(0xff1A1A1A);
+        break;
+      case 3:
+        textColor = Color(0xff010101);
         break;
       default:
     }
@@ -31,42 +38,49 @@ class MyBlackText extends StatelessWidget {
     var textShow = this.text;
     if (this.text != null &&
         this.maxLen > 0 &&
-        this.text.length > this.maxLen &&
-        this.lines < 2) {
-      textShow = this.text.substring(0, this.maxLen - 1) + '..';
+        this.text.mxText.length > this.maxLen) {
+      textShow = this.text.mxText.substring(0, this.maxLen - 1);
     }
 
-    return Text(textShow == null ? '' : '$textShow',
+    return Text(textShow == null || textShow == 'null' ? '' : '$textShow',
         overflow: TextOverflow.ellipsis,
         maxLines: lines,
         style: TextStyle(
-            fontSize: fontSize, fontWeight: this.weight, color: textColor));
+            fontSize: size.toDouble(),
+            fontWeight: this.weight,
+            color: textColor));
   }
 }
 
 class MyGrayText extends StatelessWidget {
-  final String text;
-  final fontSize;
+  final String? text;
+
+  final num size;
   final int grayLevel;
-  final int maxLines;
+  final FontWeight? weight;
+  final int lines;
   final int maxLen;
   final bool hasLineThrough;
 
   const MyGrayText(this.text,
-      {Key key,
-      this.fontSize = 14.0,
-      this.grayLevel = 1,
-      this.maxLines = 1,
+      {Key? key,
+      this.size = 14.0,
+      this.grayLevel = 2,
+      this.lines = 1,
       this.maxLen = 0,
-      this.hasLineThrough = false})
+      this.hasLineThrough = false,
+      this.weight})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var textColor = UIData.textGN;
     switch (this.grayLevel) {
+      case 1:
+        textColor = UIData.textGD;
+        break;
       case 2:
-        textColor = Color(0xff959595);
+        textColor = Color(0xff818181);
         break;
       case 3:
         textColor = Color(0xFFB7B7B7);
@@ -76,15 +90,16 @@ class MyGrayText extends StatelessWidget {
     var textShow = this.text;
     if (this.text != null &&
         this.maxLen > 0 &&
-        this.text.length > this.maxLen) {
-      textShow = this.text.substring(0, this.maxLen - 1) + '..';
+        this.text!.length > this.maxLen) {
+      textShow = this.text!.substring(0, this.maxLen - 1);
     }
 
     return Text(textShow == null || textShow == 'null' ? '' : '$textShow',
         overflow: TextOverflow.ellipsis,
-        maxLines: this.maxLines,
+        maxLines: this.lines,
         style: TextStyle(
-            fontSize: fontSize,
+            fontSize: size.toDouble(),
+            fontWeight: this.weight,
             color: textColor,
             decorationThickness: 2.0,
             decoration:
@@ -93,27 +108,37 @@ class MyGrayText extends StatelessWidget {
 }
 
 class MyCustomText extends StatelessWidget {
-  final String text;
-  final fontSize;
-  final FontWeight weight;
+  final String? text;
+
+  final num size;
+  final String? fontFamily;
+  final FontWeight? weight;
+
   final int grayLevel;
   final int maxLines;
   final Color textColor;
+  final bool alignCenter;
 
   const MyCustomText(this.text, this.textColor,
-      {Key key,
-      this.fontSize = 14.0,
+      {Key? key,
+      this.size = 14.0,
       this.weight,
       this.grayLevel = 1,
-      this.maxLines = 1})
+      this.maxLines = 1,
+      this.alignCenter = false,
+      this.fontFamily})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Text('$text',
+    return Text(text == null || text == 'null' ? '' : '$text',
         overflow: TextOverflow.ellipsis,
         maxLines: this.maxLines,
+        textAlign: this.alignCenter ? TextAlign.center : TextAlign.justify,
         style: TextStyle(
-            fontSize: fontSize, fontWeight: weight, color: textColor));
+            fontSize: size.toDouble(),
+            fontFamily: this.fontFamily,
+            fontWeight: weight,
+            color: textColor));
   }
 }

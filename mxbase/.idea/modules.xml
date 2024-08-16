@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/mxbase.iml" filepath="$PROJECT_DIR$/mxbase.iml" />
-      <module fileurl="file://$PROJECT_DIR$/android/mxbase_android.iml" filepath="$PROJECT_DIR$/android/mxbase_android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/example/android/mxbase_example_android.iml" filepath="$PROJECT_DIR$/example/android/mxbase_example_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/mxbase.iml" filepath="$PROJECT_DIR$/.idea/mxbase.iml" />
     </modules>
   </component>
 </project>
