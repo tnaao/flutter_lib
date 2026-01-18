@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mxbase/ext/mx_ext_functions.dart';
 import 'package:mxbase/model/uidata.dart';
 import 'package:mxbase/model/user_info.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:mxbase/ext/mx_ext_functions.dart';
 
 typedef TapDe = Future<void> Function();
 
@@ -43,7 +43,7 @@ class MyMainBtn extends StatelessWidget {
   final TapDebounceClick tap;
   final double radius;
   final double paddingV;
-  final double fontSize;
+  final num fontSize;
   final Color? color;
 
   final num height;
@@ -53,9 +53,9 @@ class MyMainBtn extends StatelessWidget {
       this.marginTop = 0.0,
       this.radius = 2.0,
       this.paddingV = 5.0,
-      this.fontSize = 16.0,
+      this.fontSize = 20.0,
       this.color,
-      this.height = 50,
+      this.height = 60,
       this.gradient});
 
   @override
@@ -63,16 +63,20 @@ class MyMainBtn extends StatelessWidget {
     return Container(
       margin: EdgeInsets.fromLTRB(marginL, marginTop, marginL, 0.0),
       width: MxBaseUserInfo.instance.deviceSize.width,
-      height: this.height.vsp,
+      height: height.vsp,
       child: TapDebouncer(
-        onTap: this.tap as Future<void> Function()?,
+        onTap: () async {
+          if (color == null || color?.value != Colors.grey.value) {
+            (tap as Future<void> Function()?)?.call();
+          }
+        },
         cooldown: const Duration(milliseconds: 1200),
         builder: (ctx, onTap) {
           return ElevatedButton(
             onPressed: onTap,
             style: ElevatedButton.styleFrom(
-              shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(30.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
               ),
               elevation: 0.0,
               padding: EdgeInsets.all(0.0),
@@ -82,18 +86,19 @@ class MyMainBtn extends StatelessWidget {
               decoration: BoxDecoration(
                   gradient: this.color != null
                       ? LinearGradient(colors: [this.color!, this.color!])
-                      : this.gradient != null
-                          ? this.gradient
-                          : UIData.defaultBtnGradient()),
+                      : this.gradient ?? UIData.defaultBtnGradient()),
               child: Container(
                 padding:
                     EdgeInsets.fromLTRB(0.0, this.paddingV, 0.0, this.paddingV),
                 alignment: Alignment.center,
                 child: Text(
                   '${this.title}',
+                  maxLines: 2,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      fontSize: this.fontSize, fontWeight: FontWeight.normal),
+                      fontSize: this.fontSize.fsp,
+                      color: '#1F2122'.hexColor(),
+                      fontWeight: FontWeight.normal),
                 ),
               ),
             ),
@@ -106,7 +111,7 @@ class MyMainBtn extends StatelessWidget {
 
 class MyTextBtn extends StatelessWidget {
   final String title;
-  final double fontSize;
+  final num fontSize;
   final Color color;
   final Function onTap;
   final double? width;
@@ -142,7 +147,7 @@ class MyTextBtn extends StatelessWidget {
             child: Text(
               title,
               style: TextStyle(
-                  fontSize: this.fontSize < 9 ? 9 : this.fontSize,
+                  fontSize: this.fontSize < 9 ? 9.fsp : this.fontSize.fsp,
                   color: color),
             ),
           ),
@@ -154,24 +159,28 @@ class MyTextBtn extends StatelessWidget {
 
 class MyFlatRoundedBtn extends StatelessWidget {
   final String title;
-  final double fontSize;
+  final num fontSize;
   final Color color;
   final Color? titleColor;
 
   final Color bodyColor;
   final Function onTap;
   final double? width;
+  final FontWeight? weight;
 
   final num lPadding;
   final num vPadding;
   final double? height;
   final int countDownMillis;
-  final double radius;
+  double? radius;
   final bool zeroPadding;
   final bool touchable;
 
   @override
   Widget build(BuildContext context) {
+    if (this.height != null && this.radius == null) {
+      this.radius = 0.5 * this.height!;
+    }
     return this.title.textEmpty()
         ? SizedBox(
             width: this.width,
@@ -183,10 +192,6 @@ class MyFlatRoundedBtn extends StatelessWidget {
               child: Container(
                 width: this.width,
                 height: this.height,
-                margin: this.zeroPadding ||
-                        (this.width != null && this.height != null)
-                    ? EdgeInsets.all(0.0)
-                    : EdgeInsets.fromLTRB(0.0, 0, 0, 0),
                 padding: this.zeroPadding
                     ? EdgeInsets.all(0.0)
                     : EdgeInsets.fromLTRB(this.lPadding.hsp, this.vPadding.vsp,
@@ -196,18 +201,16 @@ class MyFlatRoundedBtn extends StatelessWidget {
                     border: Border.all(color: color),
                     color: this.bodyColor,
                     borderRadius:
-                        BorderRadius.all(Radius.circular(this.radius))),
-                child: Center(
-                  child: Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontSize: this.fontSize < 9 ? 9 : this.fontSize,
-                        color:
-                            this.titleColor != null ? this.titleColor : color),
-                  ),
-                ),
+                        BorderRadius.all(Radius.circular(this.radius ?? 0.0))),
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      fontSize: this.fontSize < 9 ? 9.fsp : this.fontSize.fsp,
+                      fontWeight: this.weight ?? FontWeight.normal,
+                      color: this.titleColor != null ? this.titleColor : color),
+                ).fittedBox().centered(),
               ),
             ),
             countDownMillisec: this.countDownMillis,
@@ -224,10 +227,11 @@ class MyFlatRoundedBtn extends StatelessWidget {
     this.fontSize = 14.0,
     this.width,
     this.height,
+    this.weight,
     this.radius = 4.0,
     this.zeroPadding = false,
     this.touchable = true,
-    this.bodyColor = UIData.pureWhite,
+    this.bodyColor = Colors.transparent,
     this.lPadding = 10,
     this.vPadding = 2,
     this.titleColor,
@@ -238,15 +242,15 @@ class MyFlatRoundedBtn extends StatelessWidget {
 class MyFlatMainBtn extends StatelessWidget {
   final String title;
   final num paddingH;
-  final double fontSize;
+  final num fontSize;
   final Color color;
   final Color bodyColor;
   final Color? titleColor;
 
   final Function onTap;
   final double? width;
-
   final double height;
+  final FontWeight? weight;
   final double radius;
   final Color? borderColor;
 
@@ -263,7 +267,7 @@ class MyFlatMainBtn extends StatelessWidget {
               padding: this.height != null
                   ? EdgeInsets.all(0.0)
                   : EdgeInsets.fromLTRB(
-                      this.paddingH.sp(), 2.sp(), this.paddingH.sp(), 2.sp()),
+                      this.paddingH.hsp, 2.hsp, this.paddingH.hsp, 2.hsp),
               decoration: BoxDecoration(
                   color: this.bodyColor,
                   shape: BoxShape.rectangle,
@@ -276,7 +280,8 @@ class MyFlatMainBtn extends StatelessWidget {
                   title,
                   maxLines: 2,
                   style: TextStyle(
-                      fontSize: this.fontSize < 9 ? 9 : this.fontSize,
+                      fontSize: this.fontSize < 9 ? 9.fsp : this.fontSize.fsp,
+                      fontWeight: this.weight ?? FontWeight.normal,
                       color: titleColor != null ? titleColor : this.color),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -293,6 +298,7 @@ class MyFlatMainBtn extends StatelessWidget {
       this.color = UIData.primaryColor,
       this.titleColor,
       this.height = 40.0,
+      this.weight,
       this.radius = 4.0,
       this.borderColor,
       this.touchable = true,
@@ -303,7 +309,7 @@ class MyFlatMainBtn extends StatelessWidget {
 class MyFlatRoundedConcreteBtn extends StatelessWidget {
   final String? title;
 
-  final double fontSize;
+  final num fontSize;
   final Color color;
   final Color? titleColor;
 
@@ -314,6 +320,7 @@ class MyFlatRoundedConcreteBtn extends StatelessWidget {
   final num paddingH;
   final num paddingV;
   final double? height;
+  final FontWeight? weight;
 
   final double radius;
   final Color? borderColor;
@@ -330,7 +337,8 @@ class MyFlatRoundedConcreteBtn extends StatelessWidget {
       maxLines: 50,
       textAlign: TextAlign.center,
       style: TextStyle(
-          fontSize: this.fontSize < 9 ? 9 : this.fontSize,
+          fontSize: this.fontSize < 9 ? 9.fsp : this.fontSize.fsp,
+          fontWeight: this.weight ?? FontWeight.normal,
           color: titleColor != null ? titleColor : UIData.white),
       overflow: TextOverflow.ellipsis,
     );
@@ -375,6 +383,7 @@ class MyFlatRoundedConcreteBtn extends StatelessWidget {
       this.width,
       this.titleColor,
       this.height,
+      this.weight,
       this.radius = 4.0,
       this.borderColor,
       this.touchable = true,

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mxbase/model/uidata.dart';
 import 'package:mxbase/ext/mx_ext_functions.dart';
+import 'package:mxbase/model/uidata.dart';
 import 'package:velocity_x/velocity_x.dart';
+
 import 'my_imageview.dart';
 
 class MyVerticalTabs extends StatefulWidget {
@@ -121,7 +122,6 @@ class _VerticalTabsState extends State<MyVerticalTabs>
   int _selectedIndex = 0;
   bool? _changePageByTapView;
 
-  AnimationController? animationController;
   Animation<double>? animation;
   Animation<RelativeRect>? rectAnimation;
 
@@ -185,7 +185,9 @@ class _VerticalTabsState extends State<MyVerticalTabs>
                                       ],
                                     )
                                   : Container(),
-                              (tab.text != null) ? Text(tab.text!) : Container(),
+                              (tab.text != null)
+                                  ? Text(tab.text!)
+                                  : Container(),
                             ],
                           );
                         }
@@ -257,7 +259,9 @@ class _VerticalTabsState extends State<MyVerticalTabs>
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    animationControllers.forEach((controller) {
+      controller.dispose();
+    });
     super.dispose();
   }
 

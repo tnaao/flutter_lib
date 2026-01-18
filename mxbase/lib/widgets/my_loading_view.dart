@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mxbase/mxbase.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -8,13 +9,12 @@ class MyLoadingIndicator extends StatelessWidget {
   final String? message;
 
   const MyLoadingIndicator(
-      {Key? key, this.onTap, this.message, this.topPadding = 0.0})
-      : super(key: key);
+      {super.key, this.onTap, this.message, this.topPadding = 0.0});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: this.onTap as void Function()?,
+      onTap: onTap as void Function()?,
       child: Container(
         padding: EdgeInsets.all(5.0),
         decoration: BoxDecoration(color: Colors.transparent),
@@ -24,10 +24,16 @@ class MyLoadingIndicator extends StatelessWidget {
           children: <Widget>[
             Center(
               child: message.isTextEmpty
-                  ? CircularProgressIndicator()
+                  ? SpinKitFadingCircle(
+                      color: Colors.white,
+                      size: 50.hsp,
+                    )
                   : VStack(
                       [
-                        CircularProgressIndicator(),
+                        SpinKitFadingCircle(
+                          color: Colors.white,
+                          size: 50.hsp,
+                        ),
                         12.vSpacer(),
                         MyCustomText(message, UIData.pureWhite),
                       ],
@@ -57,16 +63,30 @@ class MyCustomLoadingIndicator extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Center(
-            child: this.loadingView != null
+            child: loadingView != null
                 ? SizedBox(
                     width: 50.0,
                     height: 50.0,
-                    child: this.loadingView,
+                    child: loadingView,
                   )
-                : CircularProgressIndicator(),
+                : SpinKitFadingCircle(
+                    color: Colors.white,
+                    size: 50.hsp,
+                  ),
           )
         ],
       ),
     );
+  }
+}
+
+class StarRefreshingIndicator extends StatelessWidget {
+  final num size;
+  final Color? color;
+  const StarRefreshingIndicator({super.key, this.size = 20, this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return SpinKitFadingCircle(color: color ?? Colors.white, size: size.fsp);
   }
 }

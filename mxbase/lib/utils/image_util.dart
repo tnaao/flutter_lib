@@ -1,11 +1,7 @@
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import 'package:image/image.dart' as Img;
+
 import 'package:http/http.dart' as http;
-import 'package:mxbase/ext/common.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_file_downloader/flutter_file_downloader.dart';
-import 'package:mxbase/ext/mx_ext_functions.dart';
+import 'package:image/image.dart' as Img;
 
 class MxFileBytes {
   final List<int> bytes;
@@ -17,29 +13,6 @@ class MxFileBytes {
 }
 
 class ImageUtil {
-  static void downloadImage(String url,
-      {MxReturn<File>? onSucceed, void Function()? onFail}) async {
-    try {
-      if (url.textEmpty()) {
-        return;
-      }
-      var dir = await getDownloadsDirectory();
-      var path = dir!.subdir('image').path +
-          '/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      FileDownloader.downloadFile(
-          url: url,
-          savePath: path,
-          onDownloadError: (error) {
-            onFail?.call();
-          },
-          onDownloadCompleted: (path) {
-            onSucceed?.call(File(path));
-          });
-    } catch (error) {
-      print(error);
-    }
-  }
-
   static void shareImage(File f) async {}
 
   static Future<http.MultipartFile?> resizeImage(File? imgSrc,

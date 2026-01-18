@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mxbase/ext/mx_ext_functions.dart';
 import 'package:mxbase/model/uidata.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:mxbase/ext/mx_ext_functions.dart';
+
 import 'my_btn.dart';
 import 'my_text.dart';
 
@@ -46,7 +47,8 @@ class WidgetHelper {
       WidgetBuilder? builder,
       String? content,
       Function? onConfirm,
-      String? textConfirm,
+      String? textCancel = '取消',
+      String? textConfirm = '确定',
       bool isCancelable = true,
       Function? onCancel}) {
     showDialog(
@@ -54,20 +56,21 @@ class WidgetHelper {
       barrierDismissible: isCancelable,
       builder: (BuildContext context) => AlertDialog(
         title: Text(
-          title!,
+          title.mxText,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-              fontSize: 15.0,
+              fontSize: 16.fsp,
               color: Colors.black,
               fontWeight: FontWeight.w500,
               fontStyle: FontStyle.normal),
         ),
+        backgroundColor: Colors.white,
         contentPadding: EdgeInsets.all(0.0),
         titleTextStyle: TextStyle(fontStyle: FontStyle.normal),
         content: Container(
           color: UIData.pureWhite,
           child: Padding(
-            padding: UIData.fromLTRB(25.sp(), 0.0, 25.sp(), 0.sp()),
+            padding: EdgeInsets.symmetric(horizontal: 25.vsp),
             child: VStack(
               [
                 20.vSpacer(),
@@ -78,18 +81,17 @@ class WidgetHelper {
                   [
                     Spacer(),
                     MyFlatRoundedConcreteBtn(
-                      '取消',
+                      textCancel,
                       UIData.clickColor(),
                       () {
                         Navigator.pop(context, 'Cancel');
                       },
                       titleColor: '#AAAAAA'.hexColor(),
-                      width: 50.sp(),
+                      paddingH: 15.hsp,
                       height: 30.vsp,
                       radius: 15.vsp,
                     ),
-                    ConstrainedBox(
-                        constraints: BoxConstraints(minWidth: 20.sp())),
+                    5.widthBox,
                     MyFlatRoundedConcreteBtn(
                       textConfirm!.textEmpty() ? '确定' : textConfirm,
                       UIData.clickColor(),
@@ -97,7 +99,7 @@ class WidgetHelper {
                         Navigator.pop(context, 'OK');
                       },
                       titleColor: UIData.primaryColor,
-                      width: 50.sp(),
+                      paddingH: 20,
                       height: 30.vsp,
                       radius: 15.vsp,
                     )

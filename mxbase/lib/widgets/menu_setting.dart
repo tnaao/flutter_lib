@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mxbase/model/uidata.dart';
-import 'package:velocity_x/velocity_x.dart';
 import 'package:mxbase/ext/mx_ext_functions.dart';
+import 'package:mxbase/model/uidata.dart';
 import 'package:mxbase/widgets/my_imageview.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class MenuTextSetting extends StatelessWidget {
   final title;
@@ -22,7 +22,7 @@ class MenuTextSetting extends StatelessWidget {
   final Color bgColor;
 
   static Widget get _defaultRightBtn => MyAssetImageView(
-        UIData.icNext,
+        'ic_next',
         width: 7.hsp,
         height: 11.vsp,
       );
@@ -141,8 +141,8 @@ class MenuSetting extends StatelessWidget {
                   hasIcon
                       ? MyAssetImageView(
                           iconPath,
-                          width: 42.sp(),
-                          height: 42.sp(),
+                          width: 42.hsp,
+                          height: 42.hsp,
                         )
                       : SizedBox(),
                   SizedBox(
@@ -169,9 +169,9 @@ class MenuSetting extends StatelessWidget {
               this.rightBtn != null
                   ? this.rightBtn
                   : MyAssetImageView(
-                      UIData.icNext,
-                      width: 15.sp(),
-                      height: 15.sp(),
+                      'ic_next',
+                      width: 15.hsp,
+                      height: 15.hsp,
                     ),
             ],
           )),

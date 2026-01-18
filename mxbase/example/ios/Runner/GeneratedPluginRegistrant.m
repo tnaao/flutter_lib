@@ -6,6 +6,12 @@
 
 #import "GeneratedPluginRegistrant.h"
 
+#if __has_include(<auto_orientation/AutoOrientationPlugin.h>)
+#import <auto_orientation/AutoOrientationPlugin.h>
+#else
+@import auto_orientation;
+#endif
+
 #if __has_include(<fluttertoast/FluttertoastPlugin.h>)
 #import <fluttertoast/FluttertoastPlugin.h>
 #else
@@ -16,6 +22,12 @@
 #import <mxbase/MxbasePlugin.h>
 #else
 @import mxbase;
+#endif
+
+#if __has_include(<package_info_plus/FPPPackageInfoPlusPlugin.h>)
+#import <package_info_plus/FPPPackageInfoPlusPlugin.h>
+#else
+@import package_info_plus;
 #endif
 
 #if __has_include(<path_provider_foundation/PathProviderPlugin.h>)
@@ -30,41 +42,43 @@
 @import shared_preferences_foundation;
 #endif
 
-#if __has_include(<sqflite/SqflitePlugin.h>)
-#import <sqflite/SqflitePlugin.h>
+#if __has_include(<sqflite_darwin/SqflitePlugin.h>)
+#import <sqflite_darwin/SqflitePlugin.h>
 #else
-@import sqflite;
+@import sqflite_darwin;
 #endif
 
-#if __has_include(<video_player_avfoundation/FLTVideoPlayerPlugin.h>)
-#import <video_player_avfoundation/FLTVideoPlayerPlugin.h>
+#if __has_include(<video_player_avfoundation/FVPVideoPlayerPlugin.h>)
+#import <video_player_avfoundation/FVPVideoPlayerPlugin.h>
 #else
 @import video_player_avfoundation;
 #endif
 
-#if __has_include(<wakelock/WakelockPlugin.h>)
-#import <wakelock/WakelockPlugin.h>
+#if __has_include(<wakelock_plus/WakelockPlusPlugin.h>)
+#import <wakelock_plus/WakelockPlusPlugin.h>
 #else
-@import wakelock;
+@import wakelock_plus;
 #endif
 
-#if __has_include(<webview_flutter/FLTWebViewFlutterPlugin.h>)
-#import <webview_flutter/FLTWebViewFlutterPlugin.h>
+#if __has_include(<webview_flutter_wkwebview/WebViewFlutterPlugin.h>)
+#import <webview_flutter_wkwebview/WebViewFlutterPlugin.h>
 #else
-@import webview_flutter;
+@import webview_flutter_wkwebview;
 #endif
 
 @implementation GeneratedPluginRegistrant
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
+  [AutoOrientationPlugin registerWithRegistrar:[registry registrarForPlugin:@"AutoOrientationPlugin"]];
   [FluttertoastPlugin registerWithRegistrar:[registry registrarForPlugin:@"FluttertoastPlugin"]];
   [MxbasePlugin registerWithRegistrar:[registry registrarForPlugin:@"MxbasePlugin"]];
+  [FPPPackageInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPPackageInfoPlusPlugin"]];
   [PathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PathProviderPlugin"]];
   [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];
   [SqflitePlugin registerWithRegistrar:[registry registrarForPlugin:@"SqflitePlugin"]];
-  [FLTVideoPlayerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTVideoPlayerPlugin"]];
-  [WakelockPlugin registerWithRegistrar:[registry registrarForPlugin:@"WakelockPlugin"]];
-  [FLTWebViewFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTWebViewFlutterPlugin"]];
+  [FVPVideoPlayerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FVPVideoPlayerPlugin"]];
+  [WakelockPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"WakelockPlusPlugin"]];
+  [WebViewFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"WebViewFlutterPlugin"]];
 }
 
 @end

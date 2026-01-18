@@ -131,7 +131,6 @@ class _VerticalTabsState extends State<MyHorizontalTabStackView>
   int _selectedIndex = 0;
   bool? _changePageByTapView;
 
-  AnimationController? animationController;
   Animation<double>? animation;
 
   List<AnimationController> animationControllers = [];
@@ -154,6 +153,14 @@ class _VerticalTabsState extends State<MyHorizontalTabStackView>
 
     _selectedIndex = widget.initialIdx;
     _selectTab(_selectedIndex);
+  }
+
+  @override
+  void dispose() {
+    animationControllers.forEach((controller) {
+      controller.dispose();
+    });
+    super.dispose();
   }
 
   @override

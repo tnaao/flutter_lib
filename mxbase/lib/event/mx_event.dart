@@ -1,19 +1,22 @@
 library mx_event_lib;
 
 import 'package:flutter/material.dart';
-export 'package:mxbase/model/app_holder.dart';
+
 export 'package:event_bus/event_bus.dart';
+export 'package:mxbase/model/app_holder.dart';
 
 abstract class MxEvent {}
 
 class MyRefreshHeaderEvent {
   final bool isNoMore;
   final bool doRefresh;
+  final bool refreshComplete;
   final Key? key;
 
   MyRefreshHeaderEvent({
     this.isNoMore = false,
     this.doRefresh = false,
+    this.refreshComplete = false,
     this.key,
   });
 }
@@ -24,7 +27,7 @@ class MyRoundedSearchInputClearEvent extends MxEvent {
   MyRoundedSearchInputClearEvent(this.key);
 }
 
-class MxLoginCheckEvent {}
+class MxLoginCheckEvent extends MxEvent {}
 
 class MxKeyboardDismissEvent {
   final Key key;
@@ -56,12 +59,20 @@ class MxGoLoginEvent extends MxEvent {
 class MxGoPathEvent extends MxEvent {
   final String path;
   final Object? args;
+  final bool isGo;
+  final void Function<T>(T?)? onBackData;
+  MxGoPathEvent(this.path, {this.args, this.isGo = false, this.onBackData});
+}
 
-  MxGoPathEvent(this.path, {this.args});
+class MxBackAndGoEvent extends MxEvent {
+  final String path;
+  final Object? args;
+  final void Function<T>(T?)? onBackData;
+  MxBackAndGoEvent(this.path, {this.args, this.onBackData});
 }
 
 class MxGoRouteEvent extends MxEvent {
-  final Function(BuildContext) goRouteMethod;
+  final Widget Function(BuildContext) goRouteMethod;
 
   MxGoRouteEvent(this.goRouteMethod);
 }
@@ -72,7 +83,15 @@ class MxApiToast extends MxEvent {
   MxApiToast(this.msg);
 }
 
-class MxRouteBackEvent extends MxEvent {}
+class MxRouteBackEvent extends MxEvent {
+  final String? path;
+  final int pageCount;
+  MxRouteBackEvent({this.path, this.pageCount = 0});
+
+  static MxRouteBackEvent get instance {
+    return MxRouteBackEvent();
+  }
+}
 
 class MxLoginEvent extends MxEvent {}
 

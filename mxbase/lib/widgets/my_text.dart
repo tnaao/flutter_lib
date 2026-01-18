@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mxbase/model/uidata.dart';
-import 'package:mxbase/ext/common.dart';
 import 'package:mxbase/mxbase.dart';
 
 class MyBlackText extends StatelessWidget {
@@ -26,6 +24,9 @@ class MyBlackText extends StatelessWidget {
   Widget build(BuildContext context) {
     var textColor = UIData.black;
     switch (this.darkLevel) {
+      case 0:
+        textColor = Colors.black;
+        break;
       case 2:
         textColor = Color(0xff1A1A1A);
         break;
@@ -46,9 +47,44 @@ class MyBlackText extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         maxLines: lines,
         style: TextStyle(
-            fontSize: size.toDouble(),
-            fontWeight: this.weight,
-            color: textColor));
+            fontSize: size.fsp, fontWeight: this.weight, color: textColor));
+  }
+}
+
+class MyWhiteText extends StatelessWidget {
+  final String? text;
+  final TextAlign? textAlign;
+  final num size;
+  final FontWeight? weight;
+  final int maxLen;
+  final int lines;
+
+  const MyWhiteText(this.text,
+      {Key? key,
+      this.size = 14,
+      this.weight,
+      this.textAlign,
+      this.maxLen = 0,
+      this.lines = 1})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var textColor = Colors.white;
+
+    var textShow = this.text;
+    if (this.text != null &&
+        this.maxLen > 0 &&
+        this.text.mxText.length > this.maxLen) {
+      textShow = '${this.text.mxText.substring(0, this.maxLen - 1)}...';
+    }
+
+    return Text(textShow == null || textShow == 'null' ? '' : '$textShow',
+        overflow: TextOverflow.ellipsis,
+        textAlign: textAlign,
+        maxLines: lines,
+        style: TextStyle(
+            fontSize: size.fsp, fontWeight: this.weight, color: textColor));
   }
 }
 
@@ -60,6 +96,7 @@ class MyGrayText extends StatelessWidget {
   final FontWeight? weight;
   final int lines;
   final int maxLen;
+  final TextAlign? textAlign;
   final bool hasLineThrough;
 
   const MyGrayText(this.text,
@@ -68,6 +105,7 @@ class MyGrayText extends StatelessWidget {
       this.grayLevel = 2,
       this.lines = 1,
       this.maxLen = 0,
+      this.textAlign,
       this.hasLineThrough = false,
       this.weight})
       : super(key: key);
@@ -80,10 +118,10 @@ class MyGrayText extends StatelessWidget {
         textColor = UIData.textGD;
         break;
       case 2:
-        textColor = Color(0xff818181);
+        textColor = Color(0xffa1a1a1);
         break;
       case 3:
-        textColor = Color(0xFFB7B7B7);
+        textColor = Color(0xffc4c4c4);
         break;
     }
 
@@ -97,8 +135,9 @@ class MyGrayText extends StatelessWidget {
     return Text(textShow == null || textShow == 'null' ? '' : '$textShow',
         overflow: TextOverflow.ellipsis,
         maxLines: this.lines,
+        textAlign: this.textAlign,
         style: TextStyle(
-            fontSize: size.toDouble(),
+            fontSize: size.fsp,
             fontWeight: this.weight,
             color: textColor,
             decorationThickness: 2.0,
@@ -136,7 +175,7 @@ class MyCustomText extends StatelessWidget {
         maxLines: this.maxLines,
         textAlign: this.alignCenter ? TextAlign.center : TextAlign.justify,
         style: TextStyle(
-            fontSize: size.toDouble(),
+            fontSize: size.fsp,
             fontFamily: this.fontFamily,
             fontWeight: weight,
             color: textColor));

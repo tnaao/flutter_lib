@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mxbase/ext/common.dart';
 import 'package:mxbase/model/uidata.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -10,14 +11,19 @@ typedef MxReturn<T> = void Function(T obj);
 
 extension MxContext on BuildContext? {
   void back() {
+    'onBackTap'.logMx();
     if (this == null) return;
     if (this!.canPop()) {
       GoRouter.of(this!).pop();
     }
   }
 
-  void alertPop() {
-    Navigator.of(this!).pop();
+  void alertPop({dynamic data}) {
+    Navigator.of(this!).pop(data);
+  }
+
+  String appName() {
+    return UIData.appName;
   }
 
   void retHome() {
@@ -34,11 +40,13 @@ extension MxContext on BuildContext? {
     GoRouter.of(this!).pop();
   }
 
-  void mxGeneralDialog(WidgetBuilder wb) {
-    showGeneralDialog(
+  Future<dynamic> mxGeneralDialog(WidgetBuilder wb,
+      {bool isBarrierDismiss = true, Color? barrierColor}) {
+    return showGeneralDialog(
         context: this!,
         barrierLabel: '',
-        barrierDismissible: true,
+        barrierColor: barrierColor ?? const Color(0x80000000),
+        barrierDismissible: isBarrierDismiss,
         transitionDuration: Duration(milliseconds: 250),
         pageBuilder: (ctx, Animation<double> animation,
             Animation<double> secondaryAnimation) {
@@ -49,7 +57,7 @@ extension MxContext on BuildContext? {
         });
   }
 
-  PersistentBottomSheetController<dynamic> mxBottomSheet(WidgetBuilder wb) {
+  PersistentBottomSheetController mxBottomSheet(WidgetBuilder wb) {
     return showBottomSheet(context: this!, builder: wb, enableDrag: false);
   }
 

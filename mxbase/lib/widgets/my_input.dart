@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:velocity_x/velocity_x.dart';
-import 'package:mxbase/model/uidata.dart';
 import 'package:mxbase/event/mx_event.dart';
 import 'package:mxbase/ext/mx_ext_functions.dart';
+import 'package:mxbase/model/uidata.dart';
 import 'package:mxbase/widgets/my_imageview.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class MyRoundedSearchButton extends StatelessWidget {
   final String? hint;
@@ -116,7 +116,7 @@ class MyRoundedSearchButton extends StatelessWidget {
           )
         ],
       ),
-    ).onInkTap(() {
+    ).xOnTap(() {
       if (this.onChange != null) {
         this.onChange!('');
       }
@@ -351,11 +351,13 @@ class BoxField extends StatelessWidget {
   final bool isPhone;
   final bool isNumber;
   final bool hasNext;
+  final TextInputType? inputType;
+  final List<TextInputFormatter> inputFormatters;
   final bool isUnsignedInteger;
   final bool isSecure;
   final String? initText;
 
-  final double fontSize;
+  final num fontSize;
   final TextAlign align;
   final Decoration? decoration;
   final TextInputAction? imeAction;
@@ -383,6 +385,8 @@ class BoxField extends StatelessWidget {
       this.onComplete,
       this.maxLen,
       this.isNumber = false,
+      this.inputType,
+      this.inputFormatters = const [],
       this.controller,
       this.textColor = UIData.black,
       this.isUnsignedInteger = false,
@@ -405,7 +409,7 @@ class BoxField extends StatelessWidget {
                 : TextInputType.phone,
         obscureText: this.isSecure,
         onSubmitted: this.onComplete,
-        style: TextStyle(fontSize: this.fontSize, color: this.textColor),
+        style: TextStyle(fontSize: this.fontSize.fsp, color: this.textColor),
         decoration: hint == null
             ? null
             : InputDecoration(
@@ -414,27 +418,33 @@ class BoxField extends StatelessWidget {
                 prefixIconConstraints:
                     BoxConstraints(maxHeight: 0.0, maxWidth: 0.0),
                 isCollapsed: true,
-                hintStyle:
-                    TextStyle(fontSize: this.fontSize, color: this.hintColor),
+                hintStyle: TextStyle(
+                    fontSize: this.fontSize.fsp, color: this.hintColor),
                 border: InputBorder.none,
               ));
 
     var formFieldWidget = TextFormField(
       initialValue: this.initText,
-      controller: this.controller,
+      controller: this.controller
+        ?..addListener(() {
+          onChange?.call(controller!.text.mxText);
+        }),
       textAlign: this.align,
       onChanged: this.onChange,
       maxLines: this.maxLines,
       textInputAction: this.imeAction,
-      keyboardType: isNumber
-          ? TextInputType.numberWithOptions(decimal: !this.isUnsignedInteger)
-          : !isPhone
-              ? TextInputType.text
-              : TextInputType.phone,
+      keyboardType: inputType ??
+          (isNumber
+              ? TextInputType.numberWithOptions(
+                  decimal: !this.isUnsignedInteger)
+              : !isPhone
+                  ? TextInputType.text
+                  : TextInputType.phone),
+      inputFormatters: inputFormatters.isNotEmpty ? inputFormatters : null,
       obscureText: this.isSecure,
       onFieldSubmitted: this.onComplete,
       maxLength: this.maxLen,
-      style: TextStyle(fontSize: this.fontSize, color: this.textColor),
+      style: TextStyle(fontSize: this.fontSize.fsp, color: this.textColor),
       decoration: InputDecoration(
         hintText: hint == null ? '' : hint,
         counter: SizedBox.shrink(),
@@ -442,7 +452,8 @@ class BoxField extends StatelessWidget {
         prefixIcon: Icon(Icons.search, color: Colors.transparent),
         prefixIconConstraints: BoxConstraints(maxHeight: 0.0, maxWidth: 0.0),
         isCollapsed: true,
-        hintStyle: TextStyle(fontSize: this.fontSize, color: this.hintColor),
+        hintStyle:
+            TextStyle(fontSize: this.fontSize.fsp, color: this.hintColor),
         border: InputBorder.none,
       ),
     );

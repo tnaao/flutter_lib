@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:velocity_x/velocity_x.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:mxbase/ext/mx_ext_functions.dart';
-import 'package:mxbase/delegate/grid_delegate.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class MySegmGridChooser extends StatefulWidget {
   const MySegmGridChooser(this.data,
@@ -77,9 +76,10 @@ class _MySegmGridChooserState extends State<MySegmGridChooser> {
     int rowsCount = (widget.data.length / widget.span).ceil().toInt();
     int spacerCount = rowsCount > 2 ? rowsCount - 1 : 0;
     if (widget.direction == Axis.horizontal) {
-      return StaggeredGridView.builder(
+      return AlignedGridView.count(
         scrollDirection: widget.direction,
         itemCount: widget.data.length,
+        crossAxisCount: widget.span,
         physics:
             widget.canScroll ? ScrollPhysics() : NeverScrollableScrollPhysics(),
         itemBuilder: (context, idx) {
@@ -93,9 +93,7 @@ class _MySegmGridChooserState extends State<MySegmGridChooser> {
               this.onItemChoosed(idx);
             },
             child: isCurrent && widget.itemCurrentBuilder != null
-                ? widget
-                    .itemCurrentBuilder!(context, idx)
-                    .box
+                ? widget.itemCurrentBuilder!(context, idx).box
                     .padding(EdgeInsets.only(bottom: widget.crossSpace))
                     .make()
                 : widget
@@ -106,32 +104,17 @@ class _MySegmGridChooserState extends State<MySegmGridChooser> {
           );
         },
         shrinkWrap: true,
-        gridDelegate: SliverStaggeredGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: rowsCount,
-          mainAxisSpacing: widget.mainSpace,
-          staggeredTileBuilder: (int index) {
-            var title = widget.data[index];
-            int? len = title.length * 14 + 40;
-            if (widget.lenCalulator != null) {
-              len = widget.lenCalulator!(index);
-            } else {
-              return StaggeredTile.extent(1, len.sp());
-            }
-            return StaggeredTile.extent(1, len!.sp());
-          },
-          staggeredTileCount: widget.data.length,
-        ),
       ).h(
         widget.height != null
             ? widget.height
             : (widget.itemLang * (rowsCount) + widget.mainSpace * spacerCount)
-                .sp(),
+                .hsp,
       );
     }
 
     return Container(
 //      height:
-//          (widget.itemLang * (rowsCount) + widget.mainSpace * spacerCount).sp(),
+//          (widget.itemLang * (rowsCount) + widget.mainSpace * spacerCount).hsp,
 //      width: widget.width,
       child: GridView.builder(
           physics: widget.canScroll

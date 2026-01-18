@@ -1,11 +1,11 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mxbase/widgets/my_loading_view.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:mxbase/model/uidata.dart';
 import 'package:mxbase/ext/mx_ext_functions.dart';
+import 'package:mxbase/model/uidata.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class MyNetImageView extends StatelessWidget {
   final String? imgURL;
@@ -45,69 +45,90 @@ class MyNetImageView extends StatelessWidget {
         ? this.imgURL!.imgAddHost()
         : this.imgURL;
 
+    bool isSvg = _imageURL.mxText.endsWith('svg');
+
     return Container(
       width: this.width,
       height: this.height,
       child: this.isOval
           ? ClipOval(
-              child: CachedNetworkImage(
-                fit: this.fit,
-                imageUrl: _imageURL!,
-                placeholderFadeInDuration: Duration.zero,
-                fadeInDuration: this.hasAnimation
-                    ? Duration(milliseconds: 150)
-                    : Duration.zero,
-                colorBlendMode: BlendMode.clear,
-                placeholder: (ctx, url) => this.placeWidget != null
-                    ? this.placeWidget!
-                    : this.hasAnimation
-                        ? MyAssetImageView(
-                            'ic_rect.png',
-                            width: this.width,
-                            height: this.height,
-                            fit: this.fit,
+              child: isSvg
+                  ? SvgPicture.network(
+                      _imageURL.mxText,
+                      fit: this.fit ?? BoxFit.cover,
+                    )
+                  : FadeInImage.memoryNetwork(
+                      placeholder: Uint8List.fromList([]),
+                      fit: this.fit != null ? this.fit! : BoxFit.cover,
+                      fadeInDuration: this.hasAnimation
+                          ? Duration(milliseconds: 150)
+                          : Duration.zero,
+                      placeholderErrorBuilder: (ctx, url, err) =>
+                          this.placeWidget != null
+                              ? this.placeWidget!
+                              : this.hasAnimation
+                                  ? MyAssetImageView(
+                                      'ic_rect.png',
+                                      width: this.width,
+                                      height: this.height,
+                                      fit: this.fit,
+                                    )
+                                  : SizedBox(),
+                      image: _imageURL!,
+                      imageErrorBuilder: (ctx, url, error) =>
+                          this.errWidget ??
+                          Center(
+                            child: Icon(
+                              Icons.now_wallpaper,
+                              color: UIData.textGL,
+                            ),
                           )
-                        : SizedBox(),
-                errorWidget: (ctx, url, error) =>
-                    this.errWidget ??
-                    Icon(
-                      Icons.now_wallpaper,
-                      color: UIData.textGL,
+                              .box
+                              .size(this.width ?? 0, this.height ?? 0)
+                              .color(UIData.windowBg)
+                              .make(),
                     ),
-              ),
               clipBehavior: Clip.antiAlias,
             )
-          : CachedNetworkImage(
-              fit: this.fit != null ? this.fit! : BoxFit.cover,
-              imageUrl: _imageURL!,
-              placeholder: (ctx, url) => this.placeWidget != null
-                  ? this.placeWidget!
-                  : this.hasAnimation
-                      ? MyAssetImageView(
-                          'ic_rect.png',
+          : isSvg
+              ? SvgPicture.network(
+                  _imageURL.mxText,
+                  fit: this.fit ?? BoxFit.cover,
+                )
+              : FadeInImage.memoryNetwork(
+                  fit: this.fit != null ? this.fit! : BoxFit.cover,
+                  image: _imageURL!,
+                  placeholder: Uint8List.fromList([]),
+                  placeholderColor: Color.fromARGB(20, 255, 255, 255),
+                  placeholderErrorBuilder: (ctx, url, error) =>
+                      this.placeWidget != null
+                          ? this.placeWidget!
+                          : this.hasAnimation
+                              ? MyAssetImageView(
+                                  'ic_rect.png',
+                                  width: this.width,
+                                  height: this.height,
+                                  color: Colors.transparent,
+                                  fit: this.fit,
+                                )
+                              : SizedBox(),
+                  fadeInDuration: this.hasAnimation
+                      ? Duration(milliseconds: 150)
+                      : Duration.zero,
+                  colorBlendMode: BlendMode.clear,
+                  imageErrorBuilder: (ctx, url, error) =>
+                      this.errWidget ??
+                      Container(
                           width: this.width,
                           height: this.height,
-                          fit: this.fit,
-                        )
-                      : SizedBox(),
-              placeholderFadeInDuration: Duration.zero,
-              fadeInDuration: this.hasAnimation
-                  ? Duration(milliseconds: 150)
-                  : Duration.zero,
-              colorBlendMode: BlendMode.clear,
-              errorWidget: (ctx, url, error) =>
-                  this.errWidget ??
-                  Container(
-                      width: this.width,
-                      height: this.height,
-                      decoration: BoxDecoration(color: UIData.windowBg),
-                      child: Center(
-                        child: Icon(
-                          Icons.now_wallpaper,
-                          color: UIData.textGL,
-                        ),
-                      )),
-            ),
+                          decoration: BoxDecoration(color: UIData.windowBg),
+                          child: Center(
+                            child: Icon(
+                              Icons.now_wallpaper,
+                              color: UIData.textGL,
+                            ),
+                          )),
+                ),
     );
   }
 
@@ -139,7 +160,7 @@ class MyAssetImageView extends StatelessWidget {
   final bool isOval;
   final double radius;
   final Function? onTap;
-
+  final bool? clickable;
   final Function? onLongTap;
 
   @override
@@ -153,25 +174,29 @@ class MyAssetImageView extends StatelessWidget {
     var assetPath = this.imgPath.assetPath();
 
     if (this.imgPath != null && this.imgPath!.startsWith('file://')) {
-      var imgFileWidget = GestureDetector(
-        onTap: this.onTap as void Function()?,
-        onLongPress: this.onLongTap as void Function()?,
-        child: Container(
-          width: this.width,
-          height: this.height,
-          color: this.bgColor,
-          child: this.isOval
-              ? ClipOval(
-                  child: Image(
-                    image: FileImage(File.fromUri(Uri.parse(this.imgPath!))),
-                    fit: BoxFit.cover,
-                  ),
-                )
-              : Image(
+      var imgFileWidget = Container(
+        width: this.width,
+        height: this.height,
+        color: this.bgColor,
+        child: this.isOval
+            ? ClipOval(
+                child: Image(
                   image: FileImage(File.fromUri(Uri.parse(this.imgPath!))),
-                  fit: this.fit,
+                  fit: BoxFit.cover,
                 ),
-        ),
+              )
+            : Image(
+                image: FileImage(File.fromUri(Uri.parse(this.imgPath!))),
+                fit: this.fit,
+              ),
+      ).xGestureTouchContainer(
+        clickable ?? onTap != null,
+        onTap: () {
+          onTap?.call();
+        },
+        onLongTap: () {
+          onLongTap?.call();
+        },
       );
 
       return isOval
@@ -182,41 +207,33 @@ class MyAssetImageView extends StatelessWidget {
     }
 
     if (this.imgPath != null && this.imgPath!.startsWith('http')) {
-      return GestureDetector(
-        onTap: this.onTap as void Function()?,
-        onLongPress: this.onLongTap as void Function()?,
-        child: MyNetImageView(
-          this.imgPath,
-          width: this.width,
-          height: this.height,
-          fit: this.fit,
-          isOval: isOval,
-        ),
+      return MyNetImageView(
+        this.imgPath,
+        width: this.width,
+        height: this.height,
+        fit: this.fit,
+        isOval: isOval,
+      ).xGestureTouchContainer(
+        clickable ?? onTap != null,
+        onTap: () {
+          onTap?.call();
+        },
+        onLongTap: () {
+          onLongTap?.call();
+        },
       );
     }
 
     final isSvg = assetPath.endsWith('.svg');
 
-    return GestureDetector(
-      onTap: this.onTap as void Function()?,
-      child: Container(
-        width: this.width,
-        height: this.height,
-        color: this.bgColor,
-        child: this.color != null
-            ? this.isOval
-                ? ClipOval(
-                    child: Material(
-                      color: this.color,
-                      clipBehavior: Clip.hardEdge,
-                      borderRadius:
-                          BorderRadius.all(Radius.circular(this.radius)),
-                      child: Container(
-                        color: this.color,
-                      ),
-                    ),
-                  )
-                : Material(
+    return Container(
+      width: this.width,
+      height: this.height,
+      color: this.bgColor,
+      child: this.color != null
+          ? this.isOval
+              ? ClipOval(
+                  child: Material(
                     color: this.color,
                     clipBehavior: Clip.hardEdge,
                     borderRadius:
@@ -224,54 +241,67 @@ class MyAssetImageView extends StatelessWidget {
                     child: Container(
                       color: this.color,
                     ),
-                  )
-            : this.isOval
-                ? ClipOval(
-                    child: isSvg
-                        ? SvgPicture.asset(assetPath,
-                            color: this.svgColor, semanticsLabel: '')
-                        : isBlank
-                            ? Icon(
-                                Icons.error,
-                                color: UIData.red,
-                              )
-                            : Image.asset(
-                                assetPath,
-                                fit: isBlank ? BoxFit.cover : this.fit,
-                              ),
-                  )
-                : this.radius < 2.0
-                    ? isSvg
-                        ? SvgPicture.asset(assetPath,
-                            color: this.svgColor, semanticsLabel: '')
-                        : isBlank
-                            ? Icon(
-                                Icons.error,
-                                color: UIData.red,
-                              )
-                            : Image.asset(
-                                assetPath,
-                                fit: isBlank ? BoxFit.cover : this.fit,
-                              )
-                    : Material(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(this.radius),
-                        ),
-                        clipBehavior: Clip.hardEdge,
-                        child: isSvg
-                            ? SvgPicture.asset(assetPath,
-                                color: this.svgColor, semanticsLabel: '')
-                            : isBlank
-                                ? Icon(
-                                    Icons.error,
-                                    color: UIData.red,
-                                  )
-                                : Image.asset(
-                                    assetPath,
-                                    fit: isBlank ? BoxFit.cover : this.fit,
-                                  ),
+                  ),
+                )
+              : Material(
+                  color: this.color,
+                  clipBehavior: Clip.hardEdge,
+                  borderRadius: BorderRadius.all(Radius.circular(this.radius)),
+                  child: Container(
+                    color: this.color,
+                  ),
+                )
+          : this.isOval
+              ? ClipOval(
+                  child: isSvg
+                      ? SvgPicture.asset(assetPath,
+                          color: this.svgColor, semanticsLabel: '')
+                      : isBlank
+                          ? Icon(
+                              Icons.error,
+                              color: UIData.red,
+                            )
+                          : Image.asset(
+                              assetPath,
+                              fit: isBlank ? BoxFit.cover : this.fit,
+                            ),
+                )
+              : this.radius < 2.0
+                  ? isSvg
+                      ? SvgPicture.asset(assetPath,
+                          color: this.svgColor, semanticsLabel: '')
+                      : isBlank
+                          ? Icon(
+                              Icons.error,
+                              color: UIData.red,
+                            )
+                          : Image.asset(
+                              assetPath,
+                              fit: isBlank ? BoxFit.cover : this.fit,
+                            )
+                  : Material(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(this.radius),
                       ),
-      ),
+                      clipBehavior: Clip.hardEdge,
+                      child: isSvg
+                          ? SvgPicture.asset(assetPath,
+                              color: this.svgColor, semanticsLabel: '')
+                          : isBlank
+                              ? Icon(
+                                  Icons.error,
+                                  color: UIData.red,
+                                )
+                              : Image.asset(
+                                  assetPath,
+                                  fit: isBlank ? BoxFit.cover : this.fit,
+                                ),
+                    ),
+    ).xGestureTouchContainer(
+      (clickable ?? onTap != null),
+      onTap: () {
+        onTap?.call();
+      },
     );
   }
 
@@ -283,6 +313,7 @@ class MyAssetImageView extends StatelessWidget {
       this.color,
       this.radius = 0.0,
       this.onTap,
+      this.clickable,
       this.bgColor,
       this.svgColor,
       this.onLongTap});

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mxbase/model/uidata.dart';
+import 'package:mxbase/event/mx_event.dart';
 import 'package:mxbase/ext/mx_ext_functions.dart';
+import 'package:mxbase/model/uidata.dart';
 import 'package:mxbase/model/user_info.dart';
 import 'package:mxbase/widgets/my_imageview.dart';
-import 'package:mxbase/event/mx_event.dart';
 
 class MyHorizontalTabGoEvent {
   final Key? key;
@@ -163,8 +163,6 @@ class _VerticalTabsState extends State<MyHorizontalTabs>
 
   bool? _changePageByTapView;
 
-  AnimationController? animationController;
-
   Animation<double>? animation;
 
   late PageController pageController;
@@ -190,6 +188,14 @@ class _VerticalTabsState extends State<MyHorizontalTabs>
     _selectedIndex = widget.initialIdx;
     _selectTab(_selectedIndex);
     this.initListener();
+  }
+
+  @override
+  void dispose() {
+    animationControllers.forEach((controller) {
+      controller.dispose();
+    });
+    super.dispose();
   }
 
   void initListener() async {

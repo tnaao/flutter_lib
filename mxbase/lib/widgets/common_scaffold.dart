@@ -14,7 +14,6 @@ class CommonLeadingBtn extends StatelessWidget {
   final Function? onBack;
 
   final String? icon;
-
   final num paddingR;
   final bool isDark;
 
@@ -32,18 +31,19 @@ class CommonLeadingBtn extends StatelessWidget {
       width: 12,
       height: MxBaseUserInfo.instance.appBarHeight,
       child: MyAssetImageView(
-        this.icon.textEmpty() ? UIData.icLeading(this.isDark) : this.icon,
-        width: 10.0,
-        height: 18.0,
+        icon.textEmpty() ? UIData.icLeading(isDark) : this.icon,
+        width: 22.hsp,
+        height: 22.hsp,
+        fit: BoxFit.contain,
       ).centered(),
     )
         .box
-        .padding(UIData.fromLTRB(15, 0, this.paddingR.toDouble(), 0))
+        .padding(UIData.fromLTRB(20, 0, paddingR.toDouble(), 0))
         .color(UIData.clickColor())
         .make()
-        .onInkTap(() {
-      if (this.onBack != null) {
-        this.onBack!();
+        .onTap(() {
+      if (onBack != null) {
+        onBack?.call();
         return;
       }
       context.back();
@@ -57,8 +57,8 @@ class CommonScaffold extends StatelessWidget with MxScreen {
   final Widget bodyData;
   final Decoration? bodyDecoration;
   final double? height;
-
-  final showFAB;
+  final num titleSize;
+  final bool showFAB;
   final showDrawer;
   final Color? backGroundColor;
   final actionFirstIcon;
@@ -73,7 +73,7 @@ class CommonScaffold extends StatelessWidget with MxScreen {
   final Color? appColor;
 
   final Color? titleColor;
-
+  final Widget? loadingView;
   final bool safeBody;
   final bool noAppBar;
   final bool hideAppbar;
@@ -82,6 +82,7 @@ class CommonScaffold extends StatelessWidget with MxScreen {
   final drawer;
   final endDrawer;
   bool isLoading;
+  final bool? isBodyLoading;
   final bool isBackLoading;
   bool isEmpty;
   bool hasLeading;
@@ -104,6 +105,7 @@ class CommonScaffold extends StatelessWidget with MxScreen {
     required this.bodyData,
     this.bodyDecoration,
     this.centerTitle = true,
+    this.titleSize = 18,
     this.showFAB = false,
     this.showDrawer = false,
     this.drawer,
@@ -113,7 +115,7 @@ class CommonScaffold extends StatelessWidget with MxScreen {
     this.scaffoldKey,
     this.actionButtons,
     this.appBar,
-    this.showBottomNav = false,
+    this.showBottomNav = true,
     this.bottomNav,
     this.centerDocked = false,
     this.floatingIcon,
@@ -131,20 +133,20 @@ class CommonScaffold extends StatelessWidget with MxScreen {
     this.hasNoWrapper = false,
     this.drawBottom = false,
     this.isEmpty = false,
-    this.appColor = UIData.pureWhite,
-    this.titleColor,
+    this.appColor = UIData.windowBg,
+    this.titleColor = UIData.pureWhite,
     this.height,
     this.onBodyClick,
     this.drawBottomColor = UIData.windowBg,
-    this.isDarkLeading = true,
+    this.isDarkLeading = false,
+    this.isBodyLoading,
+    this.loadingView,
   });
 
   Widget get _pageToDisplay {
-    return this.hasNoWrapper
+    return hasNoWrapper
         ? Container(
-            color: this.backGroundColor == null
-                ? UIData.windowBg
-                : this.backGroundColor,
+            color: this.backGroundColor ?? UIData.windowBg,
             child: Stack(
               children: <Widget>[
                 Container(
@@ -160,35 +162,40 @@ class CommonScaffold extends StatelessWidget with MxScreen {
                 isLoading && isBackLoading ? CommonLeadingBtn() : SizedBox()
               ],
             ),
-          ).click(() {
-            if (this.onBodyClick != null) this.onBodyClick!();
-          }).make()
+          ).xOnTap(() {
+            onBodyClick?.call();
+          })
         : Container(
-            height: this.height ??
+            height: height ??
                 (hideAppbar
                     ? deviceHeight + navigationHeight
                     : contentHeight + navigationHeight),
-            color: this.bodyDecoration == null ? this.backGroundColor : null,
-            decoration: this.bodyDecoration,
-            child: Stack(
-              children: <Widget>[
-                !this.drawBottom
+            color: bodyDecoration == null ? backGroundColor : null,
+            decoration: bodyDecoration,
+            child: ZStack(
+              <Widget>[
+                !drawBottom
                     ? SizedBox()
                     : Positioned(
+                        bottom: 0.0,
                         child: Container(
                           width: deviceWidth,
                           height: navigationHeight,
-                          color: this.drawBottomColor,
+                          color: drawBottomColor,
                         ),
-                        bottom: 0.0,
                       ),
-                Container(
-                    width: deviceWidth,
-                    child: !safeBody
-                        ? bodyData
-                        : SafeArea(
-                            child: bodyData,
-                          )),
+                SizedBox(
+                  width: deviceWidth,
+                  child: isBodyLoading == null
+                      ? bodyData.xSafeContainer(safeBody)
+                      : ZStack(
+                          [
+                            bodyData,
+                            isBodyLoading == true ? _loadingView : SizedBox(),
+                          ],
+                          alignment: Alignment.topCenter,
+                        ).xSafeContainer(safeBody),
+                ),
                 Center(
                   child: isLoading
                       ? _loadingView
@@ -201,15 +208,16 @@ class CommonScaffold extends StatelessWidget with MxScreen {
                     : SizedBox()
               ],
             ),
-          ).click(() {
-            if (this.onBodyClick != null) this.onBodyClick!();
-          }).make();
+          ).xOnTap(() {
+            onBodyClick?.call();
+          });
   }
 
   Widget get _loadingView {
-    return MyLoadingIndicator(
-      topPadding: 55.0,
-    );
+    return loadingView ??
+        MyLoadingIndicator(
+          topPadding: 55.0,
+        );
   }
 
   Widget myBottomBar() => BottomAppBar(
@@ -217,22 +225,22 @@ class CommonScaffold extends StatelessWidget with MxScreen {
         shape: CircularNotchedRectangle(),
         child: Ink(
           height: 50.0,
-          decoration: new BoxDecoration(
-              gradient: new LinearGradient(colors: UIData.kitGradients)),
-          child: new Row(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(colors: UIData.kitGradients)),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               SizedBox(
                 height: double.infinity,
-                child: new InkWell(
+                child: InkWell(
                   radius: 10.0,
                   splashColor: Colors.yellow,
                   onTap: () {},
                   child: Center(
-                    child: new Text(
+                    child: Text(
                       "ADD TO WISHLIST",
-                      style: new TextStyle(
+                      style: TextStyle(
                           fontSize: 12.0,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
@@ -240,19 +248,19 @@ class CommonScaffold extends StatelessWidget with MxScreen {
                   ),
                 ),
               ),
-              new SizedBox(
+              SizedBox(
                 width: 20.0,
               ),
               SizedBox(
                 height: double.infinity,
-                child: new InkWell(
+                child: InkWell(
                   onTap: () {},
                   radius: 10.0,
                   splashColor: Colors.yellow,
                   child: Center(
-                    child: new Text(
+                    child: Text(
                       "ORDER PAGE",
-                      style: new TextStyle(
+                      style: TextStyle(
                           fontSize: 12.0,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
@@ -267,33 +275,28 @@ class CommonScaffold extends StatelessWidget with MxScreen {
 
   Widget? bottomNavBar() {
     if (showBottomNav && bottomNav != null) return bottomNav;
-    if (true) return null;
-    return BottomAppBar(
-      color: UIData.pureWhite,
-      child: SizedBox(
-        height: 0.0,
-      ),
-    );
+    return null;
   }
 
-  Widget leadingWidget(BuildContext context) {
+  Widget leadingWidget(BuildContext context, {bool isDark = false}) {
     return this.noLeadingBack || !this.hasLeading
         ? SizedBox()
         : InkWell(
-            child: SizedBox(
-              width: 12,
-              height: MxBaseUserInfo.instance.appBarHeight,
-              child: MyAssetImageView(
-                UIData.icLeading(true),
-                width: 11.0,
-                height: 18.0,
-              ).centered(),
-            ).box.padding(UIData.fromLTRB(8, 0, 10, 0)).make(),
+            splashColor: Colors.transparent,
             onTap: this.onBack != null
                 ? this.onBack as void Function()?
                 : () {
                     GoRouter.of(context).pop();
                   },
+            child: SizedBox(
+              height: MxBaseUserInfo.instance.appBarHeight,
+              child: MyAssetImageView(
+                UIData.icLeading(false),
+                width: 22.hsp,
+                height: 22.hsp,
+                fit: BoxFit.fitHeight,
+              ).centered(),
+            ).box.padding(UIData.fromLTRB(20, 0, 20, 0)).make(),
           );
   }
 
@@ -313,23 +316,25 @@ class CommonScaffold extends StatelessWidget with MxScreen {
   static Widget bar(String title,
       {Color barColor = UIData.primaryColor,
       Color titleColor = UIData.icBackColor,
+      double titlesize = 18,
       List<Widget>? actions}) {
     return PreferredSize(
+        preferredSize: Size.fromHeight(MxBaseUserInfo.instance.appBarHeight),
         child: AppBar(
           centerTitle: true,
           elevation: 0.5,
           backgroundColor: barColor,
+          surfaceTintColor: Colors.transparent,
           shadowColor: Colors.transparent,
           title: Text(
             title,
             style: TextStyle(
-                fontSize: 17.fsp,
+                fontSize: titlesize.fsp,
                 fontWeight: FontWeight.w600,
                 color: titleColor),
           ),
           actions: actions,
-        ),
-        preferredSize: Size.fromHeight(MxBaseUserInfo.instance.appBarHeight));
+        ));
   }
 
   static Widget customBar(Widget leading, Widget title,
@@ -337,8 +342,10 @@ class CommonScaffold extends StatelessWidget with MxScreen {
       List<Widget>? actions,
       double elevation = 0.5}) {
     return PreferredSize(
+        preferredSize: Size.fromHeight(MxBaseUserInfo.instance.appBarHeight),
         child: AppBar(
           centerTitle: true,
+          surfaceTintColor: Colors.transparent,
           elevation: elevation,
           iconTheme: IconThemeData(
               color:
@@ -346,9 +353,8 @@ class CommonScaffold extends StatelessWidget with MxScreen {
           backgroundColor: barColor,
           title: title,
           leading: leading,
-          actions: actions == null ? [] : actions,
-        ),
-        preferredSize: Size.fromHeight(MxBaseUserInfo.instance.appBarHeight));
+          actions: actions ?? [],
+        ));
   }
 
   static Widget leadingNavDef() {
@@ -385,58 +391,52 @@ class CommonScaffold extends StatelessWidget with MxScreen {
     _titleColor = isLightTheme ? UIData.black : Colors.white;
 
     return hasNoWrapper
-        ? this._pageToDisplay
+        ? _pageToDisplay
         : Scaffold(
-            key: scaffoldKey != null ? scaffoldKey : null,
-            backgroundColor: backGroundColor != null ? backGroundColor : null,
-            appBar: this.noAppBar
+            key: scaffoldKey,
+            backgroundColor: backGroundColor,
+            appBar: noAppBar
                 ? null
-                : this.hideAppbar
-                    ? PreferredSize(
-                        preferredSize: Size.fromHeight(0),
-                        child:
-                            CommonScaffold.bar('', barColor: this._appColor!),
+                : hideAppbar
+                    ? AppBar(
+                        toolbarHeight: 0,
+                        backgroundColor: appColor,
                       )
-                    : appBar != null
-                        ? appBar
-                        : PreferredSize(
-                            preferredSize: Size.fromHeight(this.statusBarPadding
-                                ? MxBaseUserInfo.instance.statusHeight +
-                                    MxBaseUserInfo.instance.appBarHeight
-                                : MxBaseUserInfo.instance.appBarHeight),
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                top: this.statusBarPadding
-                                    ? MxBaseUserInfo.instance.statusHeight
-                                    : 0.0,
-                              ),
-                              // decoration: BoxDecoration(color: _appColor),
-                              child: AppBar(
-                                  centerTitle: centerTitle,
-                                  toolbarHeight: appBarHeight,
-                                  elevation: elevation,
-                                  iconTheme: IconThemeData(color: _titleColor),
-                                  backgroundColor: _appColor,
-                                  title: Text(
-                                    appTitle,
-                                    style: TextStyle(
-                                        fontSize: 17.fsp,
-                                        fontWeight: FontWeight.w600,
-                                        color: _titleColor),
-                                  ),
-                                  actions: actionButtons != null
-                                      ? actionButtons
-                                      : <Widget>[],
-                                  leading: this.leadingWidget(context)),
+                    : appBar ??
+                        PreferredSize(
+                          preferredSize: Size.fromHeight(this.statusBarPadding
+                              ? MxBaseUserInfo.instance.statusHeight +
+                                  MxBaseUserInfo.instance.appBarHeight
+                              : MxBaseUserInfo.instance.appBarHeight),
+                          child: Container(
+                            padding: EdgeInsets.only(
+                              top: this.statusBarPadding
+                                  ? MxBaseUserInfo.instance.statusHeight
+                                  : 0.0,
                             ),
+                            // decoration: BoxDecoration(color: _appColor),
+                            child: AppBar(
+                                centerTitle: centerTitle,
+                                toolbarHeight: appBarHeight,
+                                elevation: elevation,
+                                surfaceTintColor: Colors.transparent,
+                                iconTheme: IconThemeData(color: _titleColor),
+                                backgroundColor: _appColor,
+                                title: Text(
+                                  appTitle,
+                                  style: TextStyle(
+                                      fontSize: titleSize.fsp,
+                                      fontWeight: FontWeight.w600,
+                                      color: _titleColor),
+                                ),
+                                actions: actionButtons ?? <Widget>[],
+                                leading: this.leadingWidget(context,
+                                    isDark: isLightTheme)),
                           ),
-            drawer: this.drawer != null
-                ? this.drawer
-                : showDrawer
-                    ? CommonDrawer()
-                    : null,
-            endDrawer: this.endDrawer != null ? this.endDrawer : null,
-            body: this.statusBarPadding
+                        ),
+            drawer: drawer ?? (showDrawer ? CommonDrawer() : null),
+            endDrawer: endDrawer,
+            body: statusBarPadding
                 ? _pageToDisplay.box
                     .padding(EdgeInsets.only(top: statusHeight))
                     .make()

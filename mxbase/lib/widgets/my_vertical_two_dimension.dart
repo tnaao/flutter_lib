@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mxbase/model/uidata.dart';
-import 'package:mxbase/model/app_holder.dart';
 import 'package:mxbase/ext/mx_ext_functions.dart';
+import 'package:mxbase/model/app_holder.dart';
+import 'package:mxbase/model/uidata.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'my_listview.dart';
+
 import 'my_imageview.dart';
+import 'my_listview.dart';
 
 class MyVerticalTwoDimensionBean {
   final String? title;
@@ -182,15 +183,16 @@ class MyVerticalTwoDimensionTab extends StatefulWidget {
                         : unselectedTabBackgroundColor)
                     .height(48.vsp)
                     .make()
-                    .onInkTap(() {
+                    .xOnTap(() {
                   if (selectPage != null) selectPage(item.idx);
                 });
               })
             : SizedBox(),
       ])
           .box
-          .height(
-              isZhg && isCurrent ? 48.vsp * (data!.children!.length + 1) : 48.vsp)
+          .height(isZhg && isCurrent
+              ? 48.vsp * (data!.children!.length + 1)
+              : 48.vsp)
           .make(),
     );
   }
@@ -205,7 +207,6 @@ class _VerticalTabsState extends State<MyVerticalTwoDimensionTab>
   int? _selectedPageIndex = 0;
   bool? _changePageByTapView;
 
-  AnimationController? animationController;
   Animation<double>? animation;
   Animation<RelativeRect>? rectAnimation;
 
@@ -358,7 +359,7 @@ class _VerticalTabsState extends State<MyVerticalTwoDimensionTab>
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    animationControllers.forEach((controller) => controller.dispose());
     super.dispose();
   }
 

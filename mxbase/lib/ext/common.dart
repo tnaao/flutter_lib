@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:clipboard/clipboard.dart';
 import 'package:crypto/crypto.dart';
@@ -10,11 +12,24 @@ import 'package:jiffy/jiffy.dart';
 import 'package:logger/logger.dart';
 import 'package:mxbase/event/mx_event.dart';
 import 'package:mxbase/model/uidata.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:xrandom/xrandom.dart';
 
 export 'package:shared_preferences/shared_preferences.dart';
 
+part 'number_ext.dart';
+
 typedef MxOnValue<T> = void Function(T value);
+
+final _grassHourformatter = NumberFormat('0.00');
+
+extension ElectroExt on num {
+  String xDecimalFmt(int digits) => mx_moneyFmt(digits: digits);
+  String get xElectroFmt => mx_moneyFmt(digits: 2);
+  String get xGrassHourFmt =>
+      _grassHourformatter.format(num.tryParse(mx_moneyFmt(digits: 2)));
+}
 
 extension mxMoneyFmt on num? {
   String mx_moneyFmt({int digits = 2, bool hasPlus = false}) {
@@ -48,7 +63,46 @@ extension MxDirExt on Directory {
 }
 
 extension MxListExt<T> on List<T> {
-  T? get pickerFirst => this.isEmpty ? null : this.first;
+  T? get pickerFirst => isEmpty ? null : this.first;
+  T? picker(int i) => length <= i ? null : this[i];
+
+  int xIndexFirst(bool Function(T) check) {
+    for (int i = 0; i < length; i++) {
+      if (check.call(this[i])) {
+        return i;
+      }
+    }
+    return 0;
+  }
+
+  int xIndexNatural(bool Function(T) check) {
+    for (int i = 0; i < length; i++) {
+      if (check.call(this[i])) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  T? xPickerFirst(bool Function(T) check) {
+    for (int i = 0; i < length; i++) {
+      if (check.call(this[i])) {
+        return this[i];
+      }
+    }
+    return null;
+  }
+}
+
+extension MxListMergeExt<T> on List<List<T>> {
+  List<T> xMerge() {
+    final list = this;
+    final List<T> liLocal = [];
+    for (var E in list) {
+      liLocal.addAll(E);
+    }
+    return liLocal;
+  }
 }
 
 extension mxTextExt on dynamic {
@@ -66,6 +120,55 @@ extension mxStr on String? {
           : '¥$this';
 
   String get mxMd5 => md5.convert(utf8.encode('${this}')).toString();
+
+  int compareToVersionName(String newVersionName) {
+    String oldVersionName = mxText;
+    int res = 0;
+
+    List<String> oldNumbers = oldVersionName.split('.');
+    List<String> newNumbers = newVersionName.split('.');
+
+    // To avoid IndexOutOfBounds
+    int maxIndex = (oldNumbers.length < newNumbers.length)
+        ? oldNumbers.length
+        : newNumbers.length;
+
+    for (int i = 0; i < maxIndex; i++) {
+      int oldVersionPart = int.parse(oldNumbers[i]);
+      int newVersionPart = int.parse(newNumbers[i]);
+
+      if (oldVersionPart < newVersionPart) {
+        res = -1;
+        break;
+      } else if (oldVersionPart > newVersionPart) {
+        res = 1;
+        break;
+      }
+    }
+
+    // If versions are the same so far, but they have different length...
+    if (res == 0 && oldNumbers.length != newNumbers.length) {
+      res = (oldNumbers.length > newNumbers.length) ? 1 : -1;
+      //check if remaining parts are all zeros.
+      if (oldNumbers.length > newNumbers.length) {
+        for (int i = maxIndex; i < oldNumbers.length; i++) {
+          if (int.parse(oldNumbers[i]) != 0) {
+            return 1; //old version is greater
+          }
+        }
+        return 0; // All remaining parts of oldVersion are 0
+      } else {
+        for (int i = maxIndex; i < newNumbers.length; i++) {
+          if (int.parse(newNumbers[i]) != 0) {
+            return -1; //newVersion is greater
+          }
+        }
+        return 0; // All remaining parts of newVersion are 0
+      }
+    }
+
+    return res;
+  }
 
   String get mxBase64 => base64.encode(utf8.encode('${this}'));
 
@@ -87,7 +190,17 @@ extension mxStr on String? {
     return '';
   }
 
-  bool get isTextEmpty => this.textEmpty();
+  String? xSubStr(int maxLen) {
+    if (this == null) return null;
+    if (maxLen <= mxText.length) {
+      return this!.substring(0, maxLen);
+    }
+    return this!.substring(0, min(mxText.length, maxLen));
+  }
+
+  String? get xHttpToHttps => this?.replaceAll('http://', 'https://');
+
+  bool get isTextEmpty => textEmpty();
 
   String get xCommunicateElderRelativePrefix => this.isTextEmpty
       ? ''
@@ -107,6 +220,16 @@ extension mxStr on String? {
           ? '${this}'.replaceFirst("fwzx-", "")
           : '${this}';
 
+  Uri? toUri() {
+    if (this.textEmpty() || !this!.startsWith('http')) {
+      return null;
+    }
+    if (this!.contains('http://')) {
+      return Uri.http('', this!.split('http://')[1]);
+    }
+    return Uri.parse(this!);
+  }
+
   String starMixText({bool isPhone = false}) {
     var origin = '$this';
     if (origin.length <= 4) return origin.mxText;
@@ -121,11 +244,23 @@ extension mxStr on String? {
     return origin.isTextEmpty ? '' : '*' + origin.substring(1, origin.length);
   }
 
+  String starMixMail() {
+    var origin = '$this';
+    return origin.isTextEmpty
+        ? ''
+        : '${origin.substring(0, 3)}****${origin.substring(origin.indexOf('@'), origin.length)}';
+  }
+
   String starMixIdCard() {
     var origin = '$this';
     return origin.isTextEmpty
         ? ''
         : origin.substring(0, 6) + '********' + origin.substring(14, 18);
+  }
+
+  String xTemplate(List<dynamic> args) {
+    if (this == null) return '';
+    return sprintf(toString(), [...args]);
   }
 
   bool xHas(String? text) => this.toString().contains(text?.toString() ?? '');
@@ -202,20 +337,52 @@ extension mxStr on String? {
     return exp.hasMatch(this!);
   }
 
-  bool inputPhoneValid() {
+  bool emailValid() {
+    if (this == null) return false;
+    String pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+    RegExp exp = RegExp(pattern);
+    return exp.hasMatch(this!);
+  }
+
+  bool inputPhoneValid({String? msg = '请输入正确的手机号'}) {
     if (!this.phoneValid()) {
-      '请输入正确的手机号码'.toast();
+      msg.toast();
+      return false;
     }
     return true;
   }
 
-  bool inputPasswordValid() {
-    if (this.isTextEmpty) {
-      '请输入密码'.toast();
+  bool inputPhoneOrEmailValid({String? msg = '请输入正确的手机号或邮箱'}) {
+    if (!this.phoneValid() && !this.emailValid()) {
+      msg.toast();
       return false;
     }
-    if (this!.length < 8 || this!.length > 20) {
-      '请设置8-20位的新密码'.toast();
+    return true;
+  }
+
+  bool inputEmailValid({String? msg = '请输入正确的邮箱'}) {
+    if (!this.emailValid()) {
+      msg.toast();
+      return false;
+    }
+    return true;
+  }
+
+  bool inputPasswordValid({String? msg = '请输入密码', String? notInRangeMsg}) {
+    if (this.isTextEmpty) {
+      msg.toast();
+      return false;
+    }
+    if (this.mxText.length < 5) {
+      notInRangeMsg.toast();
+      return false;
+    }
+    return true;
+  }
+
+  bool inputAccountValid({String? msg = '请检查输入'}) {
+    if (this.isTextEmpty || this.mxText.length < 5) {
+      msg.toast();
       return false;
     }
     return true;
@@ -245,6 +412,9 @@ extension mxStr on String? {
 
   Color hexColor() {
     if (this == null) return Colors.transparent;
+    if (this!.startsWith('0x')) {
+      return Color(int.parse(this!.replaceFirst('0x', ''), radix: 16));
+    }
     if (this!.length < 9)
       return Color(int.parse('FF' + this!.replaceFirst('#', ''), radix: 16));
     return Color(int.parse(this!.replaceFirst('#', ''), radix: 16));
@@ -314,7 +484,15 @@ extension mxStr on String? {
   void toast({isToastAll = false}) {
     if (this == null || this.textEmpty()) return;
 
-    if (!isToastAll && UIData.toastExcludeList.indexOf('${this}') >= 0) {
+    if (!isToastAll &&
+        UIData.toastExcludeList
+                .xIndexNatural((e) => this?.startsWith(e) == true) >=
+            0) {
+      return;
+    }
+
+    if (!UIData.isMobile) {
+      mxText.logMx();
       return;
     }
 
@@ -365,6 +543,16 @@ extension mxTime on DateTime {
       print(e.toString());
       return '';
     }
+  }
+
+  int dateTimeToXUtcInt() {
+    final DateTime dateTime = this;
+    // Ensure the DateTime is in UTC.
+    DateTime utcDateTime = dateTime.toUtc();
+    // Get milliseconds since epoch and convert to seconds.
+    int millisecondsSinceEpoch = utcDateTime.millisecondsSinceEpoch;
+    int secondsSinceEpoch = millisecondsSinceEpoch ~/ 1000; // Integer division
+    return secondsSinceEpoch;
   }
 
   bool hasLessThreeDays() {
@@ -447,18 +635,15 @@ extension mxTime on DateTime {
   }
 
   int mxDay(DateTime other) {
-    var millisMinus =
-        this.millisecondsSinceEpoch - other.millisecondsSinceEpoch;
+    var millisMinus = millisecondsSinceEpoch - other.millisecondsSinceEpoch;
     if (millisMinus < 0) millisMinus = 0;
     return ((millisMinus).abs() * 1.0 / 1000 / 86400).floor();
   }
 
   int mxHour(DateTime other) {
-    var millisMinus =
-        this.millisecondsSinceEpoch - other.millisecondsSinceEpoch;
+    var millisMinus = millisecondsSinceEpoch - other.millisecondsSinceEpoch;
     if (millisMinus < 0) millisMinus = 0;
-    return (((millisMinus).abs().abs() * 1.0 / 1000 -
-                this.mxDay(other) * 86400) *
+    return (((millisMinus).abs().abs() * 1.0 / 1000 - mxDay(other) * 86400) *
             1.0 /
             3600)
         .floor();

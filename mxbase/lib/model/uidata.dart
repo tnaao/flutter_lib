@@ -1,12 +1,12 @@
 import 'dart:math';
-import 'dart:ui';
-import 'package:go_router/go_router.dart';
-import 'package:mxbase/event/mx_event.dart';
-import 'package:mxbase/widgets/index.dart';
-import 'package:mxbase/ext/mx_ext_functions.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mxbase/event/mx_event.dart';
+import 'package:mxbase/ext/mx_ext_functions.dart';
 import 'package:mxbase/model/user_info.dart';
+import 'package:mxbase/widgets/index.dart';
 
 class UISystemUIEvent extends MxEvent {
   final Color naviColor;
@@ -20,20 +20,6 @@ class UISystemUIEvent extends MxEvent {
 }
 
 class UIData {
-  static final urlPre = 'http://score.syedu.vip';
-
-  static final urlPres = 'https://score.syedu.vip';
-
-//微课砍价链接
-  static var urlHaggle = "$urlPre/#/pages/invite/invite/invite";
-  static var urlHaggleDetail = "$urlPre/#/pages/invite/helpCut/helpCut";
-
-//积分使用说明
-  static var scoreDesc = "$urlPre/#/pages/single/illustrate/illustrate";
-
-//分享到微信的链接
-  static var shareUrl = "$urlPre/#/pages/shareVodDownload/index/index";
-
   static Color bgPay = '#45AAFF'.hexColor();
 
   static Color moneyRed = '#FF632A'.hexColor();
@@ -44,6 +30,7 @@ class UIData {
     "商品未评价",
     "请登录",
     "用户未登录",
+    "令牌不能为空",
     "return data is null",
     "ruturn data is null",
     "该用户不存在",
@@ -53,32 +40,7 @@ class UIData {
     "操作失败"
   ];
 
-  //routes
-  static const String Rhome = "/home";
-  static const String RuserDetail = "/RuserDetail";
-  static const String Rfeedback = "/Rfeedback";
-  static const String Rsettings = "/settings";
-  static const String RthemeChange = "/RthemeChange";
-  static const String Rregister = "/Rregister";
-  static const String Rlogin = "/login";
-  static const String RpasswordChange = "/RpasswordChange";
-  static const String RpasswordReset = "/RpasswordReset";
-  static const String RphoneBind = "/RphoneBind";
-  static const String RphoneBindResult = "/RphoneBindResult";
-  static const String RserviceReply = "/RserviceReply";
-  static const String Rabout = "/Rabout";
-  static const String RorderHome = "/RorderHome";
-
-  static const int ACCOUNT_TYPE_wechat = 0; //0,微信 1,支付宝, 4.银行卡
-  static const int ACCOUNT_TYPE_alipay = 1;
-  static const int ACCOUNT_TYPE_bank = 4;
-
   static var ltr = TextDirection.rtl;
-
-  static const String RVideoCallPage = "/VideoCallPage";
-  static const String RCallHistoryPage = "/RCallHistoryPage";
-
-  static String RtcVideoToVoiceCallMessage = 'VideoToVoice';
 
   static Color alertWindowColor = Colors.black.withAlpha(50);
 
@@ -204,7 +166,13 @@ class UIData {
   }
 
   static bool isIOS() {
-    return defaultTargetPlatform == TargetPlatform.iOS;
+    return defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS;
+  }
+
+  static bool get isMobile {
+    return defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS;
   }
 
   static bool isAndroid() {
@@ -247,29 +215,11 @@ class UIData {
     );
   }
 
-  static const String profileOneRoute = "/View Profile";
-  static const String profileTwoRoute = "/Profile 2";
-  static const String notFoundRoute = "/No Search Result";
-  static const String timelineOneRoute = "/Feed";
-  static const String timelineTwoRoute = "/Tweets";
-  static const String settingsOneRoute = "/Device Settings";
-  static const String shoppingOneRoute = "/Shopping List";
-  static const String shoppingTwoRoute = "/Shopping Details";
-  static const String shoppingThreeRoute = "/Product Details";
-  static const String paymentOneRoute = "/Credit Card";
-  static const String paymentTwoRoute = "/Payment Success";
-  static const String loginOneRoute = "/Login With OTP";
-  static const String loginTwoRoute = "/Login 2";
-  static const String dashboardOneRoute = "/Dashboard 1";
-  static const String dashboardTwoRoute = "/Dashboard 2";
-  static const String icNext = "$imageDir/back_right_next.png";
-  static const String icNextRed = "$imageDir/ic_next_red.png";
-
   static const String icPayAli = 'ic_paymethod_ali.png';
   static const String icPayWechat = 'ic_paymethod_wechat.png';
 
   //strings
-  static const String appName = "双英口语";
+  static const String appName = "";
   static const int pageSize = 5;
   static const int accountChange_Charge = 1;
   static const int accountChange_Withdraw = 2;
@@ -283,34 +233,10 @@ class UIData {
   static const String quickLightFont = "Quicksand_Light.otf";
 
   //images
-  static const String imageDir = "images_systu";
-  static const String icRect = "$imageDir/rect.png";
-  static const String icOval = "$imageDir/oval.png";
-  static const String icAvatarDefault = "$imageDir/oval.png";
-
-  static const String pkImage = "$imageDir/pk.jpg";
-  static const String profileImage = "$imageDir/profile.jpg";
-  static const String blankImage = "$imageDir/blank.jpg";
-  static const String dashboardImage = "$imageDir/dashboard.jpg";
-  static const String loginImage = "$imageDir/login.jpg";
-  static const String paymentImage = "$imageDir/payment.jpg";
-  static const String settingsImage = "$imageDir/setting.jpeg";
-  static const String shoppingImage = "$imageDir/shopping.jpeg";
-  static const String timelineImage = "$imageDir/timeline.jpeg";
-  static const String verifyImage = "$imageDir/verification.jpg";
-
-  static const String placeholderImage = "http://47.111.73.27/qr_app.png";
-
-  //login
-  static const String enter_code_label = "手机号r";
-  static const String enter_code_hint = "";
-  static const String enter_otp_label = "验证码";
-  static const String enter_otp_hint = "";
-  static const String get_otp = "发送验证码";
-  static const String resend_otp = "重新发送验证码";
-  static const String login = "Login";
-  static const String enter_valid_number = "请输入正确的手机号";
-  static const String enter_valid_otp = "验证码错误";
+  static String imageDir = "images_systu";
+  static String get icRect => "$imageDir/rect.png";
+  static String get icOval => "$imageDir/oval.png";
+  static String icAvatarDefault = "$imageDir/avatar_default.png";
 
   //gneric
   static const String error = "Error";
@@ -318,12 +244,8 @@ class UIData {
   static const String ok = "OK";
   static const String noMoreData = '没有更多内容了';
   static const String RouteAppHome = "/Home";
-  static const String RouteShopHome = "ShopHome";
-  static const String cartMaxCountLimit = "数量超限";
-  static const String cartMinCountLimit = "数量不得小于最小值";
-  static const String forgot_password = "忘记密码?";
-  static const String something_went_wrong = "";
-  static const String coming_soon = "开发中";
+  static const String Rlogin = "/Login";
+  static const String Rregister = "/Register";
 
   static String testJsface() => 'http://site.sailforce.online/hello.html';
 
@@ -420,13 +342,13 @@ class UIData {
   static const Color textBN = Color(0xff050505);
   static const Color textGL = Color(0xffa8a8a8);
   static const Color textGN = Color(0xff999999);
-  static const Color textGD = Color(0xff686B73);
+  static const Color textGD = Color(0xff757575);
   static const Color textHelpRed = Color(0xffCB001C);
   static const Color textGca = Color(0xffCACACA);
   static const Color textB37 = Color(0xff373737);
   static const Color textTitleGD = Color(0xff444444);
-  static const Color windowBg = Color(0xFFF2F6F9);
-  static const Color lineBg = Color(0xFFE3E5E4);
+  static const Color windowBg = Color(0xff1F2122);
+  static const Color lineBg = Color(0xffEBEBEB);
   static const Color btnBgN = Color(0xffF7F7F7);
   static const double lineH = 0.5;
   static const num menuH = 55;
@@ -469,11 +391,11 @@ class UIData {
   ];
 
   static Color defBtnMainColor() {
-    return '#428FFC'.hexColor();
+    return '#04D382'.hexColor();
   }
 
   static Gradient defaultBtnGradient() => LinearGradient(
-      colors: ['#428FFC'.hexColor(), '#428FFC'.hexColor()],
+      colors: ['#04D382'.hexColor(), '#04D382'.hexColor()],
       begin: Alignment.centerLeft,
       end: Alignment.centerRight);
 
@@ -487,8 +409,8 @@ class UIData {
       begin: Alignment.centerLeft,
       end: Alignment.centerRight);
 
-  static const Color primaryColor = Color(0xff44A6FF);
-  static const Color accentColor = Color(0xff5EB2FE);
+  static const Color primaryColor = Color(0xff04D382);
+  static const Color accentColor = Color(0xff04D382);
 
   //randomcolor
   static final Random _random = new Random();

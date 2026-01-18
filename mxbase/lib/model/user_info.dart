@@ -1,11 +1,8 @@
 // 用户信息
 import 'dart:math';
-import 'dart:ui';
-import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:mxbase/model/uidata.dart';
 import 'package:mxbase/ext/mx_ext_functions.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 //abstract class SharedPreferences {
 //  Object get(String key);
@@ -64,6 +61,7 @@ class MxBaseUserInfo {
   static const String SP_USER_ID = "$SPKeyPrefix:id";
   static const String SP_USER_LOC = "$SPKeyPrefix:location";
   static const String SP_USER_GENDER = "$SPKeyPrefix:gender";
+  static const String SP_Language = "$SPKeyPrefix:language";
   static const String SP_tenantName = "$SPKeyPrefix:tenantName";
   static const String SP_TENANT_CODE = "$SPKeyPrefix:tenantCode";
   static const String SP_USER_AVATAR = "$SPKeyPrefix:avatar";
@@ -94,14 +92,14 @@ class MxBaseUserInfo {
 
   Map<String, dynamic> searchHistoryMap = Map();
   double statusHeight = 0.0;
-  double appBarHeight = 44.vsp;
+  double appBarHeight = 60.0;
   double systemAppBarHeight = AppBar().preferredSize.height;
   double naviHeight = 0.0;
 
   bool get hasBottomNavi => naviHeight > double.minPositive;
 
   double bottomBarHeight = 46.0;
-  late String? gender;
+  String? gender = null;
   String? name = '';
   String address = '';
   String? _nickname = '';
@@ -114,13 +112,13 @@ class MxBaseUserInfo {
   String? grade;
   String? wxId;
   String? avatar;
-  String? _id = "";
+  String? userId = "";
   String? tenantCode = "";
   String? account;
   String? password;
 
   String get displayId {
-    return _id.isTextEmpty ? '' : '$_id';
+    return userId.isTextEmpty ? '' : '$userId';
   }
 
   String get tenantName {
@@ -135,7 +133,7 @@ class MxBaseUserInfo {
     return _userType == 'RELATIVES';
   }
 
-  late String promoter;
+  String promoter = '';
   Color? themeColor;
   int swipeSpeed = 10;
   bool autoPlay = false;
@@ -150,7 +148,9 @@ class MxBaseUserInfo {
 
   bool ipsPubHide = true;
 
-  late bool firstRun;
+  bool firstRun = true;
+
+  int language = 0;
 
   bool get isBind {
     return this.phone != null && this.phone!.length > 10;
@@ -159,7 +159,7 @@ class MxBaseUserInfo {
   double dialogH({num min = 0, bool hasLimit = true, num minus = 0.0}) {
     if (!hasLimit) return double.infinity;
     var dialogMax = this.deviceSize.height * 0.75;
-    return max(min, dialogMax).toDouble() - minus.sp();
+    return max(min, dialogMax).toDouble() - minus.hsp;
   }
 
   double get safeBottomH {
@@ -182,8 +182,13 @@ class MxBaseUserInfo {
 
   Future<void> clearLogin() async {
     _token = "";
+    userId = "";
+    _nickname = "";
+    account = "";
+    password = "";
+    phone = "";
     var sp = await SharedPreferences.getInstance();
-    await sp.setString(SP_USER_TOKEN, "");
+    await save();
     return;
   }
 
@@ -191,16 +196,16 @@ class MxBaseUserInfo {
 
   Future<MxBaseUserInfo> parseLogin(dynamic model,
       {bool upToken = true}) async {
-    if (model == null) return Future.value(MxBaseUserInfo.instance);
+    if (model == null) return MxBaseUserInfo.instance;
 
     var infoBean = TokenInfoBean.fromJson(Map<String, dynamic>.from(model));
 
-    if (upToken && infoBean.token != null) _token = infoBean.token;
-    {
+    if (upToken && infoBean.token != null) {
       _token = infoBean.token;
     }
-    this._id = model['userId'];
-    this._nickname = model['nickname'];
+
+    userId = model['userId']?.toString();
+    this._nickname = model['nickname']?.toString();
     this.phone = model['phone'];
     if (!model['userType'].toString().isTextEmpty) {
       this._userType = model['userType'];
@@ -218,7 +223,7 @@ class MxBaseUserInfo {
       this.avatar = model['pic'];
     }
     await save();
-    return Future.value(MxBaseUserInfo.instance);
+    return MxBaseUserInfo.instance;
   }
 
   Future updateInfo(
@@ -226,7 +231,7 @@ class MxBaseUserInfo {
       String? phone,
       String? username,
       String? nickname}) async {
-    this._id = userId;
+    this.userId = userId;
     this.name = username;
     this.phone = phone;
     this._nickname = nickname;
@@ -252,13 +257,14 @@ class MxBaseUserInfo {
 
   Future<MxBaseUserInfo> load() async {
     var sp = await SharedPreferences.getInstance();
-    doLoad(sp);
+    _doLoad(sp);
     return MxBaseUserInfo.instance;
   }
 
-  void doLoad(SharedPreferences sp) {
+  void _doLoad(SharedPreferences sp) {
     this.account = sp.getString(SP_ACCOUNT);
     this.password = sp.getString(SP_PASSWORD);
+    this.language = sp.getInt(SP_Language) ?? 0;
     gender =
         sp.get(SP_USER_GENDER) != null ? sp.getString(SP_USER_GENDER) : "男";
     name = sp.get(SP_USER_NAME) != null ? sp.getString(SP_USER_NAME) : "";
@@ -278,7 +284,7 @@ class MxBaseUserInfo {
         : "";
     avatar = sp.get(SP_USER_AVATAR) != null ? sp.getString(SP_USER_AVATAR) : "";
     address = sp.get(SP_USER_LOC) != null ? sp.getString(SP_USER_LOC)! : "";
-    _id = sp.get(SP_UID) != null ? sp.getString(SP_UID) : "";
+    userId = sp.get(SP_UID) != null ? sp.getString(SP_UID) : null;
     _token = sp.get(SP_USER_TOKEN) != null ? sp.getString(SP_USER_TOKEN) : "";
     _userType = sp.get(SP_USER_TYPE) != null ? sp.getString(SP_USER_TYPE) : "";
     _env = sp.get(_SP_ENV) != null ? sp.getString(_SP_ENV) : "";
@@ -298,13 +304,14 @@ class MxBaseUserInfo {
     await sp.setString(SP_TENANT_CODE, '$tenantCode');
     await sp.setString(SP_tenantName, tenantName);
     await sp.setString(SP_USER_NAME, '$name');
+    await sp.setInt(SP_Language, language);
     await sp.setString(SP_USER_NICK, '$_nickname');
     await sp.setString(SP_USER_DESC, '$desc');
     await sp.setString(_SP_USER_PHONE, '$phone');
     await sp.setString(SP_USER_WEIXIN_ID, '$wxId');
     await sp.setString(SP_USER_PROMOTER_NAME, '$promoter');
     await sp.setString(SP_USER_AVATAR, '$avatar');
-    await sp.setString(SP_UID, '$_id');
+    await sp.setString(SP_UID, '$userId');
     await sp.setString(
         SP_USER_TYPE, '${_userType.textEmpty() ? '' : _userType}');
     await sp.setString(SP_USER_TOKEN, '${_token.textEmpty() ? '' : _token}');
@@ -319,5 +326,10 @@ class MxBaseUserInfo {
     var sp = await SharedPreferences.getInstance();
     await sp.setString(SP_ACCOUNT, account);
     await sp.setString(SP_PASSWORD, password.mxText);
+  }
+
+  @override
+  String toString() {
+    return 'MxBaseUserInfo{userId:$userId,phone:$phone,gender: $gender, name: $name, address: $address, _nickname: $_nickname, _tenantName: $_tenantName, _userType: $_userType, desc: $desc, _env: $_env, wxId: $wxId, promoter: $promoter, avatar: $avatar, tenantCode: $tenantCode, account: $account, password: $password, displayId: $displayId, tenantName: $tenantName, displayName: $displayName, isAppRelative: $isAppRelative, rongToken: $rongToken';
   }
 }

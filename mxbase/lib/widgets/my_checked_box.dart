@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mxbase/ext/mx_ext_functions.dart';
 import 'package:mxbase/model/uidata.dart';
+
 import 'my_imageview.dart';
 
 class MycheckboxStateless extends StatelessWidget {
   final bool initVal;
   final bool isDisabled;
   final num size;
+  final num? height;
   final num innerPadding;
   final String? iconH;
 
@@ -20,6 +22,7 @@ class MycheckboxStateless extends StatelessWidget {
       this.onChange,
       this.isDisabled = false,
       this.size = 20,
+      this.height,
       this.iconH = 'ic_check_box_h.png',
       this.iconN = 'ic_check_box_n.png',
       this.innerPadding = 0})
@@ -27,40 +30,29 @@ class MycheckboxStateless extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (this.onChange != null) this.onChange!(!this.initVal);
-      },
-      child: Container(
-        decoration:
-            BoxDecoration(shape: BoxShape.circle, color: UIData.clickColor()),
-        width: size.hsp,
-        height: size.hsp,
-        child: Padding(
-          padding: EdgeInsets.all(this.innerPadding.hsp),
-          child: this.isDisabled
-              ? MyAssetImageView(
-                  'ic_gray_check_radio.png',
-                  width: (size - innerPadding).hsp,
-                  height: (size - innerPadding).hsp,
-                  fit: BoxFit.fill,
-                )
-              : initVal
-                  ? MyAssetImageView(
-                      this.iconH,
-                      fit: BoxFit.fill,
-                      width: (size - innerPadding).hsp,
-                      height: (size - innerPadding).hsp,
-                    )
-                  : MyAssetImageView(
-                      this.iconN,
-                      fit: BoxFit.fill,
-                      width: (size - innerPadding).hsp,
-                      height: (size - innerPadding).hsp,
-                    ),
-        ),
+    return Container(
+      width: size.hsp,
+      height: (height ?? size).hsp,
+      color: UIData.clickColor(),
+      child: Padding(
+        padding: EdgeInsets.all(this.innerPadding.hsp),
+        child: this.isDisabled
+            ? MyAssetImageView(
+                'ic_gray_check_radio.png',
+                width: (size - innerPadding).hsp,
+                height: (size - innerPadding).hsp,
+                fit: BoxFit.fill,
+              )
+            : MyAssetImageView(
+                initVal ? this.iconH : this.iconN,
+                fit: BoxFit.fill,
+                width: (size - innerPadding).hsp,
+                height: ((height ?? size) - innerPadding).hsp,
+              ),
       ),
-    );
+    ).xOnTap(() {
+      if (this.onChange != null) this.onChange!(!this.initVal);
+    });
   }
 }
 
@@ -114,13 +106,13 @@ class _MyCheckedBoxSecondState extends State<MyCheckedBoxSecond> {
           child: _checked
               ? MyAssetImageView(
                   'ic_check_box_h.png',
-                  width: 18.sp(),
-                  height: 18.sp(),
+                  width: 18.hsp,
+                  height: 18.hsp,
                 )
               : MyAssetImageView(
                   'ic_check_box_n.png',
-                  width: 18.sp(),
-                  height: 18.sp(),
+                  width: 18.hsp,
+                  height: 18.hsp,
                 ),
         ),
       ),

@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mxbase/model/uidata.dart';
 import 'package:mxbase/widgets/index.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:velocity_x/velocity_x.dart';
 
+ScreenUtil _screenUtil = ScreenUtil();
+
 extension mxDivider on num {
-  Widget hLine({color = UIData.lineBg}) {
-    return HStack([
+  Widget hLine({color = UIData.lineBg, num mH = 0}) {
+    final lineView = HStack([
       Container(
         color: color,
         height: UIData.lineH,
-        width: this.toDouble(),
+        width: hsp,
       ).expand()
     ]);
+    return mH < 1
+        ? lineView
+        : lineView.box.margin(EdgeInsets.symmetric(horizontal: mH.hsp)).make();
   }
 
   Widget hSpacer({color = Colors.transparent}) {
@@ -22,10 +27,10 @@ extension mxDivider on num {
     );
   }
 
-  Widget vLine({color = UIData.lineBg}) {
+  Widget vLine({Color color = UIData.lineBg}) {
     return Container(
       color: color,
-      height: this.toDouble(),
+      height: vsp,
       width: UIData.lineH,
     );
   }
@@ -38,15 +43,11 @@ extension mxDivider on num {
   }
 
   double get natureVal =>
-      this != null && this.toDouble() >= 0 ? this.toDouble().abs() : 0.0.abs();
+      this.toDouble() >= 0 ? this.toDouble().abs() : 0.0.abs();
 
-  double get fsp => this.toDouble().abs() * ScreenUtil().scaleWidth;
+  double get fsp => _screenUtil.setSp(this.abs());
 
   double get osp => this.toDouble().abs();
-
-  double sp() {
-    return this == null ? 0.0 : this.natureVal.w;
-  }
 
   String moneyFmt() {
     if (this == null) return '0.00';
@@ -65,8 +66,60 @@ extension mxDivider on num {
     return '$minuteStr:$secondStr';
   }
 
-  void delay(Function task) async {
-    await Future.delayed(Duration(milliseconds: this.toDouble().toInt()))
+  String secondsToHmFormat() {
+    int totalSeconds = toInt();
+    if (totalSeconds < 60) {
+      return '${totalSeconds}s';
+    }
+    int minutes = totalSeconds ~/ 60; // 计算分钟数
+    int seconds = totalSeconds % 60; // 计算剩余的秒数
+    if (minutes < 60) {
+      return '${minutes}m${seconds == 0 ? '' : '${seconds}s'}';
+    }
+    return minutes.minutesToHmFormat();
+  }
+
+  String minutesToHmFormat() {
+    int totalMinutes = toInt();
+    int hours = totalMinutes ~/ 60; // 计算小时数
+    int minutes = totalMinutes % 60; // 计算剩余的分钟数
+    if (hours < 1) {
+      return '${minutes}m';
+    }
+    return '${hours}h${minutes == 0 ? '' : '${minutes}m'}';
+  }
+
+  String minutesToSimpleFormat({bool isEnglish = true}) {
+    int totalMinutes = toInt();
+    int days = totalMinutes ~/ (60 * 24); // 计算天数
+    if (days < 1) {
+      return minutesToHmFormat();
+    }
+    return '${days}day';
+  }
+
+  String minutesToHmHourValue() {
+    int totalMinutes = toInt();
+    int hours = totalMinutes ~/ 60; // 计算小时数
+    int minutes = totalMinutes % 60; // 计算剩余的分钟数
+    if (hours < 1) {
+      return '$hours'.padLeft(2, '0');
+    }
+    return '$hours'.padLeft(2, '0');
+  }
+
+  String minutesToHmMinuteValue() {
+    int totalMinutes = toInt();
+    int hours = totalMinutes ~/ 60; // 计算小时数
+    int minutes = totalMinutes % 60; // 计算剩余的分钟数
+    if (hours < 1) {
+      return '$minutes'.padLeft(2, '0');
+    }
+    return '$minutes'.padLeft(2, '0');
+  }
+
+  Future<void> delay(void Function() task) async {
+    return Future.delayed(Duration(milliseconds: toDouble().toInt()))
         .then((value) {
       try {
         task();
@@ -76,8 +129,8 @@ extension mxDivider on num {
     });
   }
 
-  Future<void> after() async {
-    return await Future.delayed(Duration(milliseconds: this.toInt()));
+  Future<Null> after() async {
+    return Future.delayed(Duration(milliseconds: toInt()));
   }
 
   Widget radius(Widget child, {evaluation: double}) {

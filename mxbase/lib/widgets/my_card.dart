@@ -1,7 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:velocity_x/velocity_x.dart';
 import 'package:mxbase/ext/mx_ext_functions.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class MyBaseCard extends StatelessWidget {
   final Widget? child;
@@ -48,8 +47,8 @@ class MyTopRoundCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(this.radius.sp()),
-          topRight: Radius.circular(this.radius.sp())),
+          topLeft: Radius.circular(this.radius.hsp),
+          topRight: Radius.circular(this.radius.hsp)),
       clipBehavior: Clip.hardEdge,
       child: this.child,
     );
@@ -72,11 +71,10 @@ class MyBottomRoundCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return ClipRRect(
       borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(this.radius.sp()),
-          bottomRight: Radius.circular(this.radius.sp())),
+          bottomLeft: Radius.circular(this.radius.hsp),
+          bottomRight: Radius.circular(this.radius.hsp)),
       clipBehavior: Clip.hardEdge,
       child: this.child,
     );

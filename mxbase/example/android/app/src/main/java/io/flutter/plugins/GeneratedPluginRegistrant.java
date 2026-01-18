@@ -16,9 +16,9 @@ public final class GeneratedPluginRegistrant {
   private static final String TAG = "GeneratedPluginRegistrant";
   public static void registerWith(@NonNull FlutterEngine flutterEngine) {
     try {
-      flutterEngine.getPlugins().add(new com.example.flutter_file_downloader.FlutterFileDownloaderPlugin());
+      flutterEngine.getPlugins().add(new de.bytepark.autoorientation.AutoOrientationPlugin());
     } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin flutter_file_downloader, com.example.flutter_file_downloader.FlutterFileDownloaderPlugin", e);
+      Log.e(TAG, "Error registering plugin auto_orientation, de.bytepark.autoorientation.AutoOrientationPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new io.github.ponnamkarthik.toast.fluttertoast.FlutterToastPlugin());
@@ -29,6 +29,11 @@ public final class GeneratedPluginRegistrant {
       flutterEngine.getPlugins().add(new com.leaf.fli.mxbase.MxbasePlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin mxbase, com.leaf.fli.mxbase.MxbasePlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new dev.fluttercommunity.plus.packageinfo.PackageInfoPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin package_info_plus, dev.fluttercommunity.plus.packageinfo.PackageInfoPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.pathprovider.PathProviderPlugin());
@@ -43,7 +48,7 @@ public final class GeneratedPluginRegistrant {
     try {
       flutterEngine.getPlugins().add(new com.tekartik.sqflite.SqflitePlugin());
     } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin sqflite, com.tekartik.sqflite.SqflitePlugin", e);
+      Log.e(TAG, "Error registering plugin sqflite_android, com.tekartik.sqflite.SqflitePlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.videoplayer.VideoPlayerPlugin());
@@ -51,14 +56,14 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin video_player_android, io.flutter.plugins.videoplayer.VideoPlayerPlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new creativemaybeno.wakelock.WakelockPlugin());
+      flutterEngine.getPlugins().add(new dev.fluttercommunity.plus.wakelock.WakelockPlusPlugin());
     } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin wakelock, creativemaybeno.wakelock.WakelockPlugin", e);
+      Log.e(TAG, "Error registering plugin wakelock_plus, dev.fluttercommunity.plus.wakelock.WakelockPlusPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.webviewflutter.WebViewFlutterPlugin());
     } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin webview_flutter, io.flutter.plugins.webviewflutter.WebViewFlutterPlugin", e);
+      Log.e(TAG, "Error registering plugin webview_flutter_android, io.flutter.plugins.webviewflutter.WebViewFlutterPlugin", e);
     }
   }
 }
