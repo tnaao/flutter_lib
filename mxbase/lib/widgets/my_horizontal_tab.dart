@@ -25,9 +25,9 @@ class MyHorizontalTabs extends StatefulWidget {
   final Color indicatorColor;
   final bool disabledChangePageFromContentView;
   final Axis contentScrollAxis;
-  final Color selectedTabBackgroundColor;
-  final Color unselectedTabBackgroundColor;
-  final Color dividerColor;
+  final Color? selectedTabBackgroundColor;
+  final Color? unselectedTabBackgroundColor;
+  final Color? dividerColor;
   final Duration changePageDuration;
   final Curve changePageCurve;
   final Color tabsShadowColor;
@@ -48,9 +48,9 @@ class MyHorizontalTabs extends StatefulWidget {
       this.indicatorColor = Colors.transparent,
       this.disabledChangePageFromContentView = false,
       this.contentScrollAxis = Axis.horizontal,
-      this.selectedTabBackgroundColor = UIData.white,
-      this.unselectedTabBackgroundColor = UIData.white,
-      this.dividerColor = const Color(0xffe5e5e5),
+      this.selectedTabBackgroundColor,
+      this.unselectedTabBackgroundColor,
+      this.dividerColor,
       this.changePageCurve = Curves.easeInOut,
       this.changePageDuration = const Duration(milliseconds: 300),
       this.tabsShadowColor = Colors.black54,
@@ -70,13 +70,16 @@ class MyHorizontalTabs extends StatefulWidget {
       double? indicatorW,
       double barWidth = 0.0,
       int titlesLen = 0,
-      Color indicatorColor = UIData.accentColor,
+      Color? indicatorColor,
       Color? titleColor,
       double? h,
-      Color normalColor = UIData.textGN,
-      Color highLightColor = UIData.accentColor,
-      String? indicatorIcon,
+      Color? normalColor,
+      Color? highLightColor,
       bool hasVDivider = false}) {
+    indicatorColor ??= UIData.accentColor;
+    normalColor ??= UIData.textGN;
+    highLightColor ??= UIData.accentColor;
+
     double fSize = isCurrent ? fontSize + 1 : fontSize;
     double w =
         barWidth > 1 ? barWidth : MxBaseUserInfo.instance.deviceSize.width;
@@ -131,21 +134,14 @@ class MyHorizontalTabs extends StatefulWidget {
                 margin: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
                 height: indicatorH,
                 width: indicatorW,
-                child: indicatorIcon.textEmpty()
+                child: isCurrent
                     ? MyAssetImageView(
                         '',
-                        color: isCurrent ? indicatorColor : Colors.transparent,
                         width: indicatorW,
-                        radius: indicatorH / 2,
+                        height: indicatorH,
+                        fit: BoxFit.fill,
                       )
-                    : isCurrent
-                        ? MyAssetImageView(
-                            '$indicatorIcon',
-                            width: indicatorW,
-                            height: indicatorH,
-                            fit: BoxFit.fill,
-                          )
-                        : SizedBox(),
+                    : SizedBox(),
               ),
             ],
             mainAxisAlignment: MainAxisAlignment.end,
@@ -225,11 +221,12 @@ class _VerticalTabsState extends State<MyHorizontalTabs>
               children: <Widget>[
                 SizedBox.fromSize(
                   child: Container(
-                    color: widget.unselectedTabBackgroundColor,
+                    color: widget.unselectedTabBackgroundColor ?? UIData.white,
                     child: Material(
                       child: Container(
                         height: widget.tabsHeight,
-                        color: widget.unselectedTabBackgroundColor,
+                        color:
+                            widget.unselectedTabBackgroundColor ?? UIData.white,
                         child: ListView.builder(
                           shrinkWrap: false,
                           scrollDirection: Axis.horizontal,
@@ -266,9 +263,11 @@ class _VerticalTabsState extends State<MyHorizontalTabs>
                             }
 
                             Color itemBGColor =
-                                widget.unselectedTabBackgroundColor;
+                                widget.unselectedTabBackgroundColor ??
+                                    UIData.white;
                             if (_selectedIndex == index)
-                              itemBGColor = widget.selectedTabBackgroundColor;
+                              itemBGColor = widget.selectedTabBackgroundColor ??
+                                  UIData.white;
 
                             return GestureDetector(
                               onTap: () {

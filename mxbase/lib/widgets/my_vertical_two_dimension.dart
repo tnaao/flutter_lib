@@ -74,15 +74,20 @@ class MyVerticalTwoDimensionTab extends StatefulWidget {
     String title,
     bool isCurrent,
     BuildContext context, {
-    Color indicatorColor = UIData.primaryColor,
-    Color titleNColor = UIData.black,
+    Color? indicatorColor,
+    Color? titleNColor,
     num indicatorH = 100,
     num indicatorW = 8,
-    Color unselectedTabBackgroundColor = UIData.pureWhite,
-    Color selectedTabBackgroundColor = UIData.pureWhite,
+    Color? unselectedTabBackgroundColor,
+    Color? selectedTabBackgroundColor,
     MyVerticalTwoDimensionBean? data,
     Function? selectPage,
   }) {
+    indicatorColor ??= UIData.primaryColor;
+    titleNColor ??= UIData.black;
+    unselectedTabBackgroundColor ??= UIData.pureWhite;
+    selectedTabBackgroundColor ??= UIData.pureWhite;
+
     var isZhg = true;
 
     var textWidget = Text(
@@ -178,9 +183,10 @@ class MyVerticalTwoDimensionTab extends StatefulWidget {
                   ],
                 )
                     .box
-                    .color(item.current
-                        ? selectedTabBackgroundColor
-                        : unselectedTabBackgroundColor)
+                    .color((item.current
+                            ? selectedTabBackgroundColor
+                            : unselectedTabBackgroundColor) ??
+                        Colors.transparent)
                     .height(48.vsp)
                     .make()
                     .xOnTap(() {

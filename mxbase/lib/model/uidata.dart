@@ -8,21 +8,26 @@ import 'package:mxbase/ext/mx_ext_functions.dart';
 import 'package:mxbase/model/user_info.dart';
 import 'package:mxbase/widgets/index.dart';
 
+import 'mx_theme_config.dart';
+
 class UISystemUIEvent extends MxEvent {
   final Color naviColor;
   final bool isLight;
   final Color? statusColor;
 
   UISystemUIEvent(
-      {this.naviColor = UIData.windowBg,
+      {Color? naviColor,
       this.isLight = true,
-      this.statusColor = Colors.transparent});
+      this.statusColor = Colors.transparent})
+      : naviColor = naviColor ?? UIData.windowBg;
 }
 
 class UIData {
-  static Color bgPay = '#45AAFF'.hexColor();
+  static MxThemeConfig get config => MxBaseUserInfo.instance.themeConfig;
 
-  static Color moneyRed = '#FF632A'.hexColor();
+  static Color get bgPay => config.bgPay.hexColor();
+
+  static Color get moneyRed => config.moneyRed.hexColor();
 
   UIData._();
 
@@ -42,7 +47,7 @@ class UIData {
 
   static var ltr = TextDirection.rtl;
 
-  static Color alertWindowColor = Colors.black.withAlpha(50);
+  static Color get alertWindowColor => config.alertWindowColor.hexColor();
 
   static String icLeading(bool isDark) {
     return isDark ? 'ic_back_btn_dark.png' : 'ic_back_btn.png';
@@ -266,19 +271,19 @@ class UIData {
     return list;
   }
 
-  static const Color pink = Color(0xFFFF00AE);
-  static const Color text333 = Color(0xFF333333);
-  static const Color text666 = Color(0xFF666666);
-  static const Color text999 = Color(0xFF999999);
+  static Color get pink => config.pink.hexColor();
+  static Color get text333 => config.text333.hexColor();
+  static Color get text666 => config.text666.hexColor();
+  static Color get text999 => config.text999.hexColor();
 
-  static const MaterialColor ui_kit_color = Colors.grey;
-  static const Color white = Colors.white;
-  static const Color pureWhite = Colors.white;
-  static const Color placeColor = Colors.blueGrey;
-  static const Color blue = Color(0xff3884FB);
-  static const Color textBlue = Color(0xff336E96);
-  static const Color textRed = Color(0xffDE6D6C);
-  static const Color green = Color(0xff54A40D);
+  static Color get ui_kit_color => config.uiKitColor.hexColor();
+  static Color get white => config.white.hexColor();
+  static Color get pureWhite => config.pureWhite.hexColor();
+  static Color get placeColor => config.placeColor.hexColor();
+  static Color get blue => config.blue.hexColor();
+  static Color get textBlue => config.textBlue.hexColor();
+  static Color get textRed => config.textRed.hexColor();
+  static Color get green => config.green.hexColor();
 
   static String heartImg(bool isHigh) {
     return isHigh ? 'ic_heart_h.png' : 'ic_heart_n.png';
@@ -288,9 +293,9 @@ class UIData {
     return hideDetail ? 'ic_detail_unfold.png' : 'ic_detail_fold.png';
   }
 
-  static Color dividerColor() => '#F8F8F8'.hexColor();
+  static Color dividerColor() => config.dividerColor.hexColor();
 
-  static Color orderRed() => '#FB3467'.hexColor();
+  static Color orderRed() => config.orderRed.hexColor();
 
   static Widget transferSendIcon() => Container(
         width: 22.0,
@@ -324,93 +329,85 @@ class UIData {
         ),
       );
 
-  static Color clickColor() => '#01000000'.hexColor();
+  static Color clickColor() => config.clickColor.hexColor();
 
-  static Color btnSelFillColor() => '#FFF1FB'.hexColor();
+  static Color btnSelFillColor() => config.btnSelFillColor.hexColor();
 
-  static Color tabBlue() => '#423BD0'.hexColor();
+  static Color tabBlue() => config.tabBlue.hexColor();
 
-  static Color inputBg() => '#F5F5F5'.hexColor();
+  static Color inputBg() => config.inputBg.hexColor();
 
-  static const Color imgBlack = Color(0xff4F4F4F);
-  static const Color bgF3 = Color(0xffF3F3F3);
-  static const Color bgF3Sel = Color(0xffE9F1F8);
-  static const Color black = Color(0xff363A44);
-  static const Color red = Colors.red;
-  static const Color blockYellow = Color(0xffFFF5CB);
+  static Color get imgBlack => config.imgBlack.hexColor();
+  static Color get bgF3 => config.bgF3.hexColor();
+  static Color get bgF3Sel => config.bgF3Sel.hexColor();
+  static Color get black => config.black.hexColor();
+  static Color get red => config.red.hexColor();
+  static Color get blockYellow => config.blockYellow.hexColor();
   static const double textActionSize = 15.0;
-  static const Color textBN = Color(0xff050505);
-  static const Color textGL = Color(0xffa8a8a8);
-  static const Color textGN = Color(0xff999999);
-  static const Color textGD = Color(0xff757575);
-  static const Color textHelpRed = Color(0xffCB001C);
-  static const Color textGca = Color(0xffCACACA);
-  static const Color textB37 = Color(0xff373737);
-  static const Color textTitleGD = Color(0xff444444);
-  static const Color windowBg = Color(0xff1F2122);
-  static const Color lineBg = Color(0xffEBEBEB);
-  static const Color btnBgN = Color(0xffF7F7F7);
+  static Color get textBN => config.textBN.hexColor();
+  static Color get textGL => config.textGL.hexColor();
+  static Color get textGN => config.textGN.hexColor();
+  static Color get textGD => config.textGD.hexColor();
+  static Color get textHelpRed => config.textHelpRed.hexColor();
+  static Color get textGca => config.textGca.hexColor();
+  static Color get textB37 => config.textB37.hexColor();
+  static Color get textTitleGD => config.textTitleGD.hexColor();
+  static Color get windowBg => config.windowBg.hexColor();
+  static Color get lineBg => config.lineBg.hexColor();
+  static Color get btnBgN => config.btnBgN.hexColor();
   static const double lineH = 0.5;
   static const num menuH = 55;
   static const num menuRadius = 7;
   static const num menuSpacerVertical = 15;
   static const double lineHB = 1.2;
   static const double dividerH = 10.0;
-  static const Color fansYellow = Color(0xffE4AC25);
-  static const Color icBackColor = Color(0xff575756);
+  static Color get fansYellow => config.fansYellow.hexColor();
+  static Color get icBackColor => config.icBackColor.hexColor();
 
-  static const TextStyle tsSGLTag =
+  static TextStyle get tsSGLTag =>
       TextStyle(color: UIData.textGL, fontSize: 12);
-  static const TextStyle tsSGNTag =
+  static TextStyle get tsSGNTag =>
       TextStyle(color: UIData.textGL, fontSize: 12);
 
-  static const TextStyle tsSGNTitle =
+  static TextStyle get tsSGNTitle =>
       TextStyle(color: UIData.textGN, fontSize: 14);
-  static const TextStyle tsBTitleNormal =
+  static TextStyle get tsBTitleNormal =>
       TextStyle(color: Colors.black, fontSize: 14);
 
-  static const TextStyle tsSGNTitleBigger =
+  static TextStyle get tsSGNTitleBigger =>
       TextStyle(color: UIData.textGN, fontSize: 16);
 
-  static const TextStyle tsRaiseTitleN =
+  static TextStyle get tsRaiseTitleN =>
       TextStyle(fontSize: 16, color: UIData.white);
   static const double raiseHN = 33.0;
 
 //colors
-  static List<Color> kitGradients = [
-    // new Color.fromRGBO(103, 218, 255, 1.0),
-
-    // new Color.fromRGBO(3, 169, 244, 1.0),
-    // new Color.fromRGBO(0, 122, 193, 1.0),
-    Colors.blueGrey.shade800,
-    Colors.blueGrey,
-  ];
-  static List<Color> kitGradients2 = [
-    Colors.cyan.shade600,
-    Colors.blue.shade900
-  ];
+  static List<Color> get kitGradients =>
+      config.kitGradients.map((e) => e.hexColor()).toList();
+  static List<Color> get kitGradients2 =>
+      config.kitGradients2.map((e) => e.hexColor()).toList();
 
   static Color defBtnMainColor() {
-    return '#04D382'.hexColor();
+    return config.defBtnMainColor.hexColor();
   }
 
   static Gradient defaultBtnGradient() => LinearGradient(
-      colors: ['#04D382'.hexColor(), '#04D382'.hexColor()],
+      colors: config.defaultBtnGradient.map((e) => e.hexColor()).toList(),
       begin: Alignment.centerLeft,
       end: Alignment.centerRight);
 
   static Gradient cartActivityTagGradient() => LinearGradient(
-      colors: ['#33C8161D'.hexColor(), '#00EE784D'.hexColor()],
+      colors: config.cartActivityTagGradient.map((e) => e.hexColor()).toList(),
       begin: Alignment.centerLeft,
       end: Alignment.centerRight);
 
   static Gradient homeSearchGradient() => LinearGradient(
-      colors: ['#88838282'.hexColor(), '#88E9E8E8'.hexColor()],
+      colors: config.homeSearchGradient.map((e) => e.hexColor()).toList(),
       begin: Alignment.centerLeft,
       end: Alignment.centerRight);
 
-  static const Color primaryColor = Color(0xff04D382);
-  static const Color accentColor = Color(0xff04D382);
+  static Color get primaryColor => config.primaryColor.hexColor();
+  static Color get accentColor => config.accentColor.hexColor();
 
   //randomcolor
   static final Random _random = new Random();
@@ -422,7 +419,7 @@ class UIData {
     return new Color(0xFF000000 + _random.nextInt(0x00FFFFFF));
   }
 
-  static Color normalBtnGray() => '#F7F7F7'.hexColor();
+  static Color normalBtnGray() => config.normalBtnGray.hexColor();
 
-  static Color normalBtnRed() => '#FFE1F6'.hexColor();
+  static Color normalBtnRed() => config.normalBtnRed.hexColor();
 }

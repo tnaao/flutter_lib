@@ -88,7 +88,7 @@ class CommonScaffold extends StatelessWidget with MxScreen {
   bool hasLeading;
   bool hasNoWrapper = false;
   bool drawBottom = false;
-  final Color drawBottomColor;
+  final Color? drawBottomColor;
   final Function? onBack;
 
   final Function? onBodyClick;
@@ -110,7 +110,7 @@ class CommonScaffold extends StatelessWidget with MxScreen {
     this.showDrawer = false,
     this.drawer,
     this.endDrawer,
-    this.backGroundColor = UIData.windowBg,
+    this.backGroundColor,
     this.actionFirstIcon = Icons.search,
     this.scaffoldKey,
     this.actionButtons,
@@ -133,11 +133,11 @@ class CommonScaffold extends StatelessWidget with MxScreen {
     this.hasNoWrapper = false,
     this.drawBottom = false,
     this.isEmpty = false,
-    this.appColor = UIData.windowBg,
-    this.titleColor = UIData.pureWhite,
+    this.appColor,
+    this.titleColor,
     this.height,
     this.onBodyClick,
-    this.drawBottomColor = UIData.windowBg,
+    this.drawBottomColor,
     this.isDarkLeading = false,
     this.isBodyLoading,
     this.loadingView,
@@ -181,7 +181,7 @@ class CommonScaffold extends StatelessWidget with MxScreen {
                         child: Container(
                           width: deviceWidth,
                           height: navigationHeight,
-                          color: drawBottomColor,
+                          color: drawBottomColor ?? UIData.windowBg,
                         ),
                       ),
                 SizedBox(
@@ -314,10 +314,12 @@ class CommonScaffold extends StatelessWidget with MxScreen {
   }
 
   static Widget bar(String title,
-      {Color barColor = UIData.primaryColor,
-      Color titleColor = UIData.icBackColor,
+      {Color? barColor,
+      Color? titleColor,
       double titlesize = 18,
       List<Widget>? actions}) {
+    barColor ??= UIData.primaryColor;
+    titleColor ??= UIData.icBackColor;
     return PreferredSize(
         preferredSize: Size.fromHeight(MxBaseUserInfo.instance.appBarHeight),
         child: AppBar(
@@ -338,9 +340,10 @@ class CommonScaffold extends StatelessWidget with MxScreen {
   }
 
   static Widget customBar(Widget leading, Widget title,
-      {Color barColor = UIData.primaryColor,
+      {Color? barColor,
       List<Widget>? actions,
       double elevation = 0.5}) {
+    barColor ??= UIData.primaryColor;
     return PreferredSize(
         preferredSize: Size.fromHeight(MxBaseUserInfo.instance.appBarHeight),
         child: AppBar(
@@ -364,11 +367,12 @@ class CommonScaffold extends StatelessWidget with MxScreen {
   }
 
   static Widget leadingNav(BuildContext context,
-      {Color titleColor = UIData.black,
+      {Color? titleColor,
       num paddingR = 0.0,
       bool isDark = false,
       String? icon,
       Function? onBack}) {
+    titleColor ??= UIData.black;
     return CommonLeadingBtn(
       paddingR: paddingR,
       isDark: isDark,
@@ -385,7 +389,7 @@ class CommonScaffold extends StatelessWidget with MxScreen {
 
   @override
   Widget build(BuildContext context) {
-    _appColor = this.appColor == null ? UIData.pureWhite : this.appColor;
+    _appColor = this.appColor ?? UIData.pureWhite;
 
     bool isLightTheme = UIData.isLightColor(_appColor!);
     _titleColor = isLightTheme ? UIData.black : Colors.white;

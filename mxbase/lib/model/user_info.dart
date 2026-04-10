@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:mxbase/ext/mx_ext_functions.dart';
+import 'package:mxbase/model/mx_theme_config.dart';
+import 'dart:convert';
 
 //abstract class SharedPreferences {
 //  Object get(String key);
@@ -46,6 +48,7 @@ class MxBaseUserInfo {
   static const String SP_TOKEN_TYPE = "$SPKeyPrefix:tokenType";
 
   static const String SP_USER_THEME = "theme.color.key";
+  static const String SP_THEME_CONFIG = "theme.config.json";
   static const String SP_USER_TOKEN = "$SPKeyPrefix:token";
   static const String SP_ACCOUNT = "$SPKeyPrefix:account";
   static const String SP_PASSWORD = "$SPKeyPrefix:password";
@@ -135,6 +138,7 @@ class MxBaseUserInfo {
 
   String promoter = '';
   Color? themeColor;
+  MxThemeConfig themeConfig = MxThemeConfig();
   int swipeSpeed = 10;
   bool autoPlay = false;
 
@@ -261,6 +265,11 @@ class MxBaseUserInfo {
     return MxBaseUserInfo.instance;
   }
 
+  void updateThemeConfig(MxThemeConfig config) {
+    themeConfig.copyFrom(config);
+    save();
+  }
+
   void _doLoad(SharedPreferences sp) {
     this.account = sp.getString(SP_ACCOUNT);
     this.password = sp.getString(SP_PASSWORD);
@@ -293,6 +302,14 @@ class MxBaseUserInfo {
         : "";
     firstRun = sp.get(SP_FIRST_RUN) != null ? sp.getBool(SP_FIRST_RUN)! : true;
     this.initData();
+    String? configJson = sp.getString(SP_THEME_CONFIG);
+    if (configJson != null && configJson.isNotEmpty) {
+      try {
+        themeConfig = MxThemeConfig.fromJson(jsonDecode(configJson));
+      } catch (e) {
+        print('Load ThemeConfig Error: $e');
+      }
+    }
   }
 
   void initData() {}
@@ -312,11 +329,11 @@ class MxBaseUserInfo {
     await sp.setString(SP_USER_PROMOTER_NAME, '$promoter');
     await sp.setString(SP_USER_AVATAR, '$avatar');
     await sp.setString(SP_UID, '$userId');
-    await sp.setString(
-        SP_USER_TYPE, '${_userType.textEmpty() ? '' : _userType}');
+    await sp.setString(SP_USER_TYPE, '${_userType.textEmpty() ? '' : _userType}');
     await sp.setString(SP_USER_TOKEN, '${_token.textEmpty() ? '' : _token}');
     await sp.setString(SP_USER_RONG_TOKEN, '$rongToken');
     await sp.setBool(SP_FIRST_RUN, firstRun);
+    await sp.setString(SP_THEME_CONFIG, jsonEncode(themeConfig.toJson()));
 //    await sp.setInt(SP_USER_THEME, themeColor.value);
   }
 

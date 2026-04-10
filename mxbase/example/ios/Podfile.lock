@@ -1,8 +1,9 @@
 PODS:
+  - auto_orientation (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - fluttertoast (0.0.2):
     - Flutter
-    - Toast
   - mxbase (0.0.1):
     - Flutter
     - SwiftProtobuf
@@ -14,11 +15,10 @@ PODS:
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - sqflite (0.0.3):
+  - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
   - SwiftProtobuf (1.29.0)
-  - Toast (4.1.1)
   - video_player_avfoundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -29,13 +29,14 @@ PODS:
     - FlutterMacOS
 
 DEPENDENCIES:
+  - auto_orientation (from `.symlinks/plugins/auto_orientation/ios`)
   - Flutter (from `Flutter`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - mxbase (from `.symlinks/plugins/mxbase/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-  - sqflite (from `.symlinks/plugins/sqflite/darwin`)
+  - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
   - wakelock_plus (from `.symlinks/plugins/wakelock_plus/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/darwin`)
@@ -43,9 +44,10 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - SwiftProtobuf
-    - Toast
 
 EXTERNAL SOURCES:
+  auto_orientation:
+    :path: ".symlinks/plugins/auto_orientation/ios"
   Flutter:
     :path: Flutter
   fluttertoast:
@@ -58,8 +60,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
-  sqflite:
-    :path: ".symlinks/plugins/sqflite/darwin"
+  sqflite_darwin:
+    :path: ".symlinks/plugins/sqflite_darwin/darwin"
   video_player_avfoundation:
     :path: ".symlinks/plugins/video_player_avfoundation/darwin"
   wakelock_plus:
@@ -68,19 +70,19 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
 
 SPEC CHECKSUMS:
-  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  fluttertoast: 76fea30fcf04176325f6864c87306927bd7d2038
+  auto_orientation: a1600c9ed72e6e96982fb4e1214463343342432a
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  fluttertoast: 2c67e14dce98bbdb200df9e1acf610d7a6264ea1
   mxbase: 408e065548a476e2af58211bff95bc742fe65d09
-  package_info_plus: 580e9a5f1b6ca5594e7c9ed5f92d1dfb2a66b5e1
+  package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
-  sqflite: c35dad70033b8862124f8337cc994a809fcd9fa3
+  sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
   SwiftProtobuf: b7aa08087e2ab6d162862d143020091254095f69
-  Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
   video_player_avfoundation: 2cef49524dd1f16c5300b9cd6efd9611ce03639b
-  wakelock_plus: fd58c82b1388f4afe3fe8aa2c856503a262a5b03
+  wakelock_plus: 04623e3f525556020ebd4034310f20fe7fda8b49
   webview_flutter_wkwebview: 1821ceac936eba6f7984d89a9f3bcb4dea99ebb2
 
-PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
+PODFILE CHECKSUM: 0dbd5a87e0ace00c9610d2037ac22083a01f861d
 
 COCOAPODS: 1.16.2

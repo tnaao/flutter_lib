@@ -243,8 +243,8 @@ class MyFlatMainBtn extends StatelessWidget {
   final String title;
   final num paddingH;
   final num fontSize;
-  final Color color;
-  final Color bodyColor;
+  final Color? color;
+  final Color? bodyColor;
   final Color? titleColor;
 
   final Function onTap;
@@ -269,11 +269,11 @@ class MyFlatMainBtn extends StatelessWidget {
                   : EdgeInsets.fromLTRB(
                       this.paddingH.hsp, 2.hsp, this.paddingH.hsp, 2.hsp),
               decoration: BoxDecoration(
-                  color: this.bodyColor,
+                  color: this.bodyColor ?? UIData.pureWhite,
                   shape: BoxShape.rectangle,
                   border: Border.all(
                       color:
-                          this.borderColor != null ? this.borderColor! : color),
+                          this.borderColor != null ? this.borderColor! : (color ?? UIData.primaryColor)),
                   borderRadius: BorderRadius.all(Radius.circular(radius))),
               child: Center(
                 child: Text(
@@ -282,7 +282,7 @@ class MyFlatMainBtn extends StatelessWidget {
                   style: TextStyle(
                       fontSize: this.fontSize < 9 ? 9.fsp : this.fontSize.fsp,
                       fontWeight: this.weight ?? FontWeight.normal,
-                      color: titleColor != null ? titleColor : this.color),
+                      color: titleColor != null ? titleColor : (this.color ?? UIData.primaryColor)),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -295,14 +295,14 @@ class MyFlatMainBtn extends StatelessWidget {
   MyFlatMainBtn(this.title, this.onTap,
       {this.fontSize = 14.0,
       this.width,
-      this.color = UIData.primaryColor,
+      this.color,
       this.titleColor,
       this.height = 40.0,
       this.weight,
       this.radius = 4.0,
       this.borderColor,
       this.touchable = true,
-      this.bodyColor = UIData.pureWhite,
+      this.bodyColor,
       this.paddingH = 28});
 }
 

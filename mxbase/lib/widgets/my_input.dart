@@ -26,7 +26,7 @@ class MyRoundedSearchButton extends StatelessWidget {
 
   final String? initText;
 
-  final Color bgColor;
+  final Color? bgColor;
   final bool isHomeGradient;
 
   MyRoundedSearchButton(
@@ -41,9 +41,9 @@ class MyRoundedSearchButton extends StatelessWidget {
       this.radius,
       this.iconSize = 15.0,
       this.initText,
-      this.bgColor = UIData.windowBg,
+      this.bgColor,
       this.isHomeGradient = false,
-      this.hintColor = UIData.textGN})
+      this.hintColor = Colors.transparent})
       : super(key: key);
 
   TextEditingController? _controller;
@@ -75,7 +75,7 @@ class MyRoundedSearchButton extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         border: Border.all(color: Colors.transparent),
-        color: this.bgColor,
+        color: this.bgColor ?? UIData.windowBg,
         gradient: this.isHomeGradient ? UIData.homeSearchGradient() : null,
         borderRadius: BorderRadius.all(
             Radius.circular(this.radius != null ? this.radius! : height / 2)),
@@ -90,7 +90,9 @@ class MyRoundedSearchButton extends StatelessWidget {
           this.searchIcon == null || this.searchIcon!.length < 1
               ? Icon(
                   Icons.search,
-                  color: this.hintColor,
+                  color: this.hintColor == Colors.transparent
+                      ? UIData.textGN
+                      : this.hintColor,
                   size: this.iconSize,
                 )
               : MyAssetImageView(
@@ -108,7 +110,10 @@ class MyRoundedSearchButton extends StatelessWidget {
                 Text(
                   '$hint',
                   style: TextStyle(
-                      fontSize: this.fontSize - 2.0, color: this.hintColor),
+                      fontSize: this.fontSize - 2.0,
+                      color: this.hintColor == Colors.transparent
+                          ? UIData.textGN
+                          : this.hintColor),
                 ),
               ],
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -362,8 +367,8 @@ class BoxField extends StatelessWidget {
   final Decoration? decoration;
   final TextInputAction? imeAction;
   final bool isCenter;
-  final Color hintColor;
-  final Color textColor;
+  final Color? hintColor;
+  final Color? textColor;
   final TextEditingController? controller;
 
   BoxField(
@@ -381,14 +386,14 @@ class BoxField extends StatelessWidget {
       this.h,
       this.maxLines = 1,
       this.isCenter = true,
-      this.hintColor = UIData.textGN,
+      this.hintColor,
       this.onComplete,
       this.maxLen,
       this.isNumber = false,
       this.inputType,
       this.inputFormatters = const [],
       this.controller,
-      this.textColor = UIData.black,
+      this.textColor,
       this.isUnsignedInteger = false,
       this.imeAction,
       this.hasNext = false})
@@ -409,7 +414,9 @@ class BoxField extends StatelessWidget {
                 : TextInputType.phone,
         obscureText: this.isSecure,
         onSubmitted: this.onComplete,
-        style: TextStyle(fontSize: this.fontSize.fsp, color: this.textColor),
+        style: TextStyle(
+            fontSize: this.fontSize.fsp,
+            color: this.textColor ?? UIData.black),
         decoration: hint == null
             ? null
             : InputDecoration(
@@ -419,7 +426,8 @@ class BoxField extends StatelessWidget {
                     BoxConstraints(maxHeight: 0.0, maxWidth: 0.0),
                 isCollapsed: true,
                 hintStyle: TextStyle(
-                    fontSize: this.fontSize.fsp, color: this.hintColor),
+                    fontSize: this.fontSize.fsp,
+                    color: this.hintColor ?? UIData.textGN),
                 border: InputBorder.none,
               ));
 
@@ -444,7 +452,8 @@ class BoxField extends StatelessWidget {
       obscureText: this.isSecure,
       onFieldSubmitted: this.onComplete,
       maxLength: this.maxLen,
-      style: TextStyle(fontSize: this.fontSize.fsp, color: this.textColor),
+      style: TextStyle(
+          fontSize: this.fontSize.fsp, color: this.textColor ?? UIData.black),
       decoration: InputDecoration(
         hintText: hint == null ? '' : hint,
         counter: SizedBox.shrink(),
@@ -452,8 +461,9 @@ class BoxField extends StatelessWidget {
         prefixIcon: Icon(Icons.search, color: Colors.transparent),
         prefixIconConstraints: BoxConstraints(maxHeight: 0.0, maxWidth: 0.0),
         isCollapsed: true,
-        hintStyle:
-            TextStyle(fontSize: this.fontSize.fsp, color: this.hintColor),
+        hintStyle: TextStyle(
+            fontSize: this.fontSize.fsp,
+            color: this.hintColor ?? UIData.textGN),
         border: InputBorder.none,
       ),
     );

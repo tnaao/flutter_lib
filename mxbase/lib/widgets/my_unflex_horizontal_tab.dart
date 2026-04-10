@@ -14,8 +14,8 @@ class MyUnflexHorizontalTabView extends StatefulWidget {
   final Color indicatorColor;
   final bool disabledChangePageFromContentView;
   final Axis contentScrollAxis;
-  final Color selectedTabBackgroundColor;
-  final Color unselectedTabBackgroundColor;
+  final Color? selectedTabBackgroundColor;
+  final Color? unselectedTabBackgroundColor;
   final Color dividerColor;
   final Duration changePageDuration;
   final Curve changePageCurve;
@@ -36,8 +36,8 @@ class MyUnflexHorizontalTabView extends StatefulWidget {
       this.indicatorColor = Colors.transparent,
       this.disabledChangePageFromContentView = false,
       this.contentScrollAxis = Axis.horizontal,
-      this.selectedTabBackgroundColor = UIData.white,
-      this.unselectedTabBackgroundColor = UIData.white,
+      this.selectedTabBackgroundColor,
+      this.unselectedTabBackgroundColor,
       this.dividerColor = const Color(0xffe5e5e5),
       this.changePageCurve = Curves.easeInOut,
       this.changePageDuration = const Duration(milliseconds: 300),
@@ -56,9 +56,11 @@ class MyUnflexHorizontalTabView extends StatefulWidget {
       double indicatorH = 8.0,
       double? indicatorW,
       int titlesLen = 0,
-      Color indicatorColor = UIData.accentColor,
-      Color normalColor = UIData.textGN,
+      Color? indicatorColor,
+      Color? normalColor,
       bool hasVDivider = false}) {
+    indicatorColor ??= UIData.accentColor;
+    normalColor ??= UIData.textGN;
     if (titlesLen > 0) {
       double w = MxBaseUserInfo.instance.deviceSize.width;
       tabWidth = titlesLen == 0
@@ -216,9 +218,9 @@ class _VerticalTabsState extends State<MyUnflexHorizontalTabView>
                               }
 
                               Color itemBGColor =
-                                  widget.unselectedTabBackgroundColor;
+                                  widget.unselectedTabBackgroundColor ?? UIData.white;
                               if (_selectedIndex == index)
-                                itemBGColor = widget.selectedTabBackgroundColor;
+                                itemBGColor = widget.selectedTabBackgroundColor ?? UIData.white;
 
                               return GestureDetector(
                                 onTap: () {

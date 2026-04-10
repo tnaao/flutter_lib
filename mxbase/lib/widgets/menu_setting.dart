@@ -19,7 +19,7 @@ class MenuTextSetting extends StatelessWidget {
   final num paddingV;
   final num centerPaddingStart;
   final double height;
-  final Color bgColor;
+  final Color? bgColor;
 
   static Widget get _defaultRightBtn => MyAssetImageView(
         'ic_next',
@@ -36,7 +36,7 @@ class MenuTextSetting extends StatelessWidget {
       this.titleSize = 15.0,
       this.rightAction1,
       this.centerPaddingStart = 10,
-      this.bgColor = UIData.pureWhite,
+      this.bgColor,
       this.isTitleRequire = false});
 
   @override
@@ -52,8 +52,8 @@ class MenuTextSetting extends StatelessWidget {
                 border: Border(
                     bottom:
                         BorderSide(color: UIData.lineBg, width: UIData.lineH)),
-                color: this.bgColor)
-            : BoxDecoration(color: this.bgColor),
+                color: this.bgColor ?? UIData.pureWhite)
+            : BoxDecoration(color: this.bgColor ?? UIData.pureWhite),
         child: Stack(
           children: [
             Row(

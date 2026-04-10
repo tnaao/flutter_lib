@@ -7,10 +7,11 @@ import 'package:velocity_x/velocity_x.dart';
 ScreenUtil _screenUtil = ScreenUtil();
 
 extension mxDivider on num {
-  Widget hLine({color = UIData.lineBg, num mH = 0}) {
+  Widget hLine({Color? color, num mH = 0}) {
+    final resolvedColor = color ?? UIData.lineBg;
     final lineView = HStack([
       Container(
-        color: color,
+        color: resolvedColor,
         height: UIData.lineH,
         width: hsp,
       ).expand()
@@ -27,9 +28,9 @@ extension mxDivider on num {
     );
   }
 
-  Widget vLine({Color color = UIData.lineBg}) {
+  Widget vLine({Color? color}) {
     return Container(
-      color: color,
+      color: color ?? UIData.lineBg,
       height: vsp,
       width: UIData.lineH,
     );

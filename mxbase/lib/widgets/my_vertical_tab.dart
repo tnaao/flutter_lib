@@ -51,10 +51,12 @@ class MyVerticalTabs extends StatefulWidget {
         super(key: key);
 
   static Tab myVTab(String title, bool isCurrent, BuildContext context,
-      {Color indicatorColor = UIData.primaryColor,
-      Color titleNColor = UIData.black,
+      {Color? indicatorColor,
+      Color? titleNColor,
       num indicatorH = 100,
       num indicatorW = 8}) {
+    indicatorColor ??= UIData.primaryColor;
+    titleNColor ??= UIData.black;
     var isZhg = true;
 
     var textWidget = Text(
